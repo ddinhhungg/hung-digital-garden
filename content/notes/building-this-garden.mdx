@@ -1,0 +1,47 @@
+---
+title: "Building this garden — process notes"
+title_en: "building this garden"
+date: "Apr 20, 2026"
+tag: "project"
+readTime: 7
+excerpt: "How I went from zero technical knowledge to having a real website, with AI as my collaborator."
+tags: ["process", "build-in-public", "ai", "tools"]
+---
+
+This is the meta-post. The one where I write about building the thing I'm writing on.
+
+I have zero background in tech, code, or anything IT-related. Everything here was built with AI assistance — specifically Claude — and a clear sense of what I wanted the end result to feel like.
+
+## Why a digital garden and not a blog
+
+I've tried maintaining a blog twice. Both times I abandoned it within two months. The problem wasn't discipline — it was pressure. Every post felt like it needed to be complete, polished, publishable.
+
+A digital garden is different. The metaphor is better. <mark>Gardens grow slowly, unevenly, and that's the point.</mark> Some notes are seeds. Some are fully grown. They exist at different stages of development, and that's okay.
+
+## The design process
+
+I worked with Claude Design to mock up the visual direction before writing a single line of code. We went through questions about layout, feel, color, typography. I described what I wanted as a *feeling* — a designer's sketchbook, something with texture and personality — and the AI translated that into a design system.
+
+> The best tools disappear. They stop being tools and become extensions of how you think.
+
+Three variations. I picked the notebook spread. Then we iterated — adjusting the hero section, adding Facebook and Instagram to the footer, tweaking proportions until it felt right.
+
+### From design to code
+
+Once the hi-fi design was approved, the spec was passed to Claude Code (a different tool — this one writes actual production code). The instructions were clear: recreate this pixel-perfect in Next.js, set up MDX so I can write posts myself, deploy to Vercel.
+
+The result is what you're reading now.
+
+## What I actually do to publish a post
+
+1. Create a new `.mdx` file in `content/notes/`
+2. Fill in the frontmatter (title, date, tag, excerpt)
+3. Write the content in plain text with simple markdown
+4. Push to GitHub
+5. Vercel automatically deploys within about 60 seconds
+
+That's it. No dashboard, no CMS login, no export steps. Just writing.
+
+<div className="article-divider">· · ·</div>
+
+The goal was always to make publishing feel like writing in a notebook. I think we got close.
