@@ -7,8 +7,8 @@ import { getAllPosts } from '@/lib/posts';
 
 // Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
 const PORTRAIT_SRC = '/portrait.jpg';
-// Drop /public/intro.mp4 để dùng video local (muted autoplay loop). Để '' nếu chưa có.
-const VIDEO_SRC = '/intro.mp4';
+// YouTube Short ID (phần sau youtu.be/ hoặc shorts/)
+const YOUTUBE_ID = '9Tr1uH1nnvQ';
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
@@ -122,11 +122,12 @@ export default function HomePage() {
             border: '1.5px solid var(--ink-lt)',
             position: 'relative', overflow: 'hidden',
           }}>
-            {VIDEO_SRC ? (
-              <video
-                src={VIDEO_SRC}
-                autoPlay muted loop playsInline
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            {YOUTUBE_ID ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&modestbranding=1&playsinline=1&rel=0`}
+                title="intro video"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
               />
             ) : (
               <>
@@ -141,11 +142,24 @@ export default function HomePage() {
                     intro video / ambient loop
                   </div>
                 </div>
-                <div style={{ position: 'absolute', bottom: 10, right: 12, fontFamily: 'var(--hand)', fontSize: 13, color: 'rgba(255,255,255,0.22)', transform: 'rotate(-1deg)' }}>
-                  embed video ↗
-                </div>
               </>
             )}
+            {/* Social links overlay — bottom of video */}
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)',
+              padding: '28px 14px 10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              zIndex: 3,
+            }}>
+              <span style={{ fontFamily: 'var(--hand)', fontSize: 12, color: 'rgba(255,255,255,0.55)', transform: 'rotate(-0.5deg)' }}>
+                more videos →
+              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <a href="https://www.tiktok.com/@hungg_ddinh" target="_blank" rel="noopener noreferrer" className="social-pill">tiktok ↗</a>
+                <a href="https://www.instagram.com/ddinh_hungg/" target="_blank" rel="noopener noreferrer" className="social-pill">instagram ↗</a>
+              </div>
+            </div>
           </div>
 
           {/* Quick nav cards — overlap the bottom of video */}
@@ -176,6 +190,19 @@ export default function HomePage() {
               </TransitionLink>
             ))}
           </div>
+
+          {/* Scroll hint */}
+          <a href="#garden-map" className="reveal reveal-delay-3" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+            textDecoration: 'none', paddingBottom: 20, opacity: 0.55,
+          }}>
+            <span style={{ fontFamily: 'var(--hand)', fontSize: 13, color: 'var(--ink-muted)', transform: 'rotate(-0.5deg)' }}>
+              latest updates below
+            </span>
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" style={{ animation: 'arrowBounce 1.6s ease-in-out infinite' }}>
+              <path d="M8 1 L8 15 M3 11 L8 16 L13 11" stroke="var(--ink-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </a>
         </div>
       </section>
 

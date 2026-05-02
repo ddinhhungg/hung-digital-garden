@@ -84,6 +84,7 @@ body::after {
   animation: loaderTextPulse 1.8s ease-in-out infinite;
 }
 @keyframes loaderTextPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes arrowBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
 /* ── OPEN BOOK 3D ── */
 /* Scene provides perspective */
@@ -264,6 +265,14 @@ body::after {
   box-shadow: 0 8px 18px rgba(28,20,16,0.10);
   background: var(--cream) !important;
 }
+.social-pill {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.75); text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.25); padding: 4px 9px; border-radius: 2px;
+  background: rgba(255,255,255,0.08); backdrop-filter: blur(4px);
+  transition: background 0.15s, color 0.15s;
+}
+.social-pill:hover { background: rgba(255,255,255,0.18); color: rgba(255,255,255,1); }
 
 /* Garden-map sticky cards — use individual `translate` to not fight with inline rotate() */
 .map-card {
