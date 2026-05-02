@@ -10,6 +10,7 @@ interface NavProps {
 
 export default function Nav({ showBack = false }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -18,11 +19,16 @@ export default function Nav({ showBack = false }: NavProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Close menu on route change
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <nav className={`site-nav${scrolled ? ' scrolled' : ''}`}>
-      <TransitionLink href="/" className="nav-logo">{"Hưng's Garden"}</TransitionLink>
+      <TransitionLink href="/" className="nav-logo" onClick={closeMenu}>{"Hưng's Garden"}</TransitionLink>
 
-      <div className="nav-links">
+      <div className={`nav-links${menuOpen ? ' is-open' : ''}`} onClick={closeMenu}>
         <TransitionLink href="/" className={pathname === '/' ? 'active' : ''}>home</TransitionLink>
         <TransitionLink href="/notes" className={pathname.startsWith('/notes') ? 'active' : ''}>notes</TransitionLink>
         <TransitionLink href="/projects" className={pathname === '/projects' ? 'active' : ''}>projects</TransitionLink>
@@ -32,7 +38,7 @@ export default function Nav({ showBack = false }: NavProps) {
       </div>
 
       {showBack ? (
-        <TransitionLink href="/" className="nav-back" style={{
+        <TransitionLink href="/" className="nav-back" onClick={closeMenu} style={{
           display: 'flex', alignItems: 'center', gap: 8,
           fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.08em',
           color: 'var(--ink-muted)', textDecoration: 'none',
@@ -44,7 +50,17 @@ export default function Nav({ showBack = false }: NavProps) {
           back to garden
         </TransitionLink>
       ) : (
-        <div className="nav-meta">☀ growing since 2024</div>
+        <>
+          <div className="nav-meta">☀ growing since 2024</div>
+          <button
+            className={`nav-hamburger${menuOpen ? ' is-open' : ''}`}
+            onClick={() => setMenuOpen(v => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
+          </button>
+        </>
       )}
     </nav>
   );

@@ -616,7 +616,26 @@ footer.site-footer {
 .back-link:hover { color: var(--tomato); }
 .back-note { font-family: var(--hand); font-size: 14px; color: var(--ink-muted); transform: rotate(-1deg); }
 
+/* ── NAV HAMBURGER ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; padding: 6px; background: none; border: none;
+  cursor: pointer; z-index: 110;
+}
+.nav-hamburger span {
+  display: block; width: 20px; height: 1.5px;
+  background: var(--ink-lt);
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), opacity 0.15s;
+  transform-origin: center;
+}
+.nav-hamburger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-hamburger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
 /* ── RESPONSIVE ── */
+
+/* ─ Large tablet (900px) ─ */
 @media (max-width: 900px) {
   nav.site-nav { padding: 0 20px; }
   .nav-meta { display: none; }
@@ -628,4 +647,109 @@ footer.site-footer {
   .margin-col { display: none; }
   .back-strip { grid-column: 1 / -1; }
   .ruler { display: none; }
+  .next-cards { flex-wrap: wrap; }
+  .next-card { min-width: 200px; }
+}
+
+/* ─ Mobile (768px) ─ */
+@media (max-width: 768px) {
+  /* Nav: hamburger replaces links */
+  .nav-hamburger { display: flex; }
+  .nav-meta { display: none !important; }
+  .nav-links {
+    position: absolute; top: 54px; left: 0; right: 0;
+    flex-direction: column; gap: 0 !important;
+    background: rgba(249,245,238,0.97);
+    backdrop-filter: blur(16px) saturate(140%);
+    border-bottom: 1px solid var(--cream-dk);
+    box-shadow: 0 4px 20px rgba(28,20,16,0.08);
+    padding: 8px 0 12px; z-index: 100;
+    display: none !important;
+  }
+  .nav-links.is-open { display: flex !important; }
+  .nav-links a {
+    padding: 11px 24px; font-size: 11px !important;
+    letter-spacing: 0.09em; border-bottom: 1px solid var(--cream-dk);
+  }
+  .nav-links a:last-child { border-bottom: none; }
+  .nav-links a::after { display: none; }
+  .nav-links a:hover { background: rgba(181,52,30,0.04); }
+
+  /* Hero: stack vertically */
+  .hero { flex-direction: column !important; min-height: auto !important; }
+  .hero-left {
+    flex: none !important; width: 100% !important;
+    padding: 48px 24px 36px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--cream-dk);
+  }
+  .hero-right {
+    flex: none !important; width: 100% !important;
+    padding: 28px 20px 32px !important;
+    gap: 24px !important;
+  }
+  /* Hide video on mobile to save space */
+  .hero-right > .reveal.reveal-delay-2 { display: none !important; }
+  /* Quick nav: 2×2 grid */
+  .hero-quicknav {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Garden map: 2×2 */
+  .map-grid {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+  .map-grid > * { flex: 0 0 calc(50% - 6px) !important; }
+
+  /* Feed cards: single column */
+  .feed-grid { flex-direction: column !important; }
+
+  /* Project shelf: horizontal scroll */
+  .shelf-row {
+    overflow-x: auto !important;
+    padding-bottom: 8px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .shelf-row::-webkit-scrollbar { display: none; }
+
+  /* About section: column */
+  .about-content { flex-direction: column !important; gap: 24px !important; }
+  .about-portrait { flex: none !important; width: 100% !important; align-items: center !important; }
+  .about-portrait > div { width: fit-content !important; } /* portrait image wrapper */
+
+  /* Sections */
+  .section { padding: 32px 16px !important; }
+  .section-title { font-size: 26px !important; }
+
+  /* Footer */
+  footer.site-footer { padding: 24px 16px !important; }
+
+  /* Article */
+  .article-wrap { padding: 28px 16px 60px !important; }
+  .article-title { font-size: clamp(22px, 6vw, 32px) !important; }
+  .next-cards { flex-direction: column !important; }
+  .next-card { min-width: 0 !important; }
+  .back-strip { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+
+  /* Notes listing */
+  .notes-item { flex-direction: column !important; gap: 12px !important; }
+}
+
+/* ─ Phone (480px) ─ */
+@media (max-width: 480px) {
+  .hero-left { padding: 36px 18px 28px !important; }
+  h1[style*="92px"] { font-size: clamp(52px, 14vw, 72px) !important; }
+
+  /* Garden map: single column on very small screens */
+  .map-grid > * { flex: 0 0 100% !important; }
+  .map-grid { gap: 10px !important; }
+
+  /* Loader book: scale down slightly */
+  .bk-scene { transform: scale(0.82); }
+
+  /* Nav logo smaller */
+  .nav-logo { font-size: 14px !important; }
 }

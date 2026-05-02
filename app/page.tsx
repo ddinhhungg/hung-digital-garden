@@ -24,7 +24,7 @@ export default function HomePage() {
         position: 'relative', overflow: 'hidden', alignItems: 'stretch',
       }}>
         {/* Left notebook page */}
-        <div style={{
+        <div className="hero-left" style={{
           flex: '0 0 44%', padding: '64px 44px 56px 56px',
           borderRight: '1px solid var(--cream-dk)',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -89,7 +89,7 @@ export default function HomePage() {
         </div>
 
         {/* Right page */}
-        <div style={{
+        <div className="hero-right" style={{
           flex: 1, padding: '40px 44px 40px 48px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
           position: 'relative',
@@ -150,7 +150,7 @@ export default function HomePage() {
           </div>
 
           {/* Quick nav cards */}
-          <div className="reveal reveal-delay-3" style={{ display: 'flex', gap: 10 }}>
+          <div className="hero-quicknav reveal reveal-delay-3" style={{ display: 'flex', gap: 10 }}>
             {[
               { icon: '📓', label: 'notes', href: '/notes' },
               { icon: '🌱', label: 'projects', href: '/projects' },
@@ -188,7 +188,7 @@ export default function HomePage() {
           <div className="section-stamp">navigation</div>
           <h2 className="section-title">The Garden Map</h2>
         </div>
-        <div style={{ display: 'flex', gap: 20 }}>
+        <div className="map-grid" style={{ display: 'flex', gap: 20 }}>
           {[
             { icon: '📓', title: 'Notes', sub: 'Learning notes, reading logs,\nhalf-baked ideas worth keeping.', bg: '#F7E8D0', rotate: '-1.5deg', href: '/notes' },
             { icon: '🌱', title: 'Projects', sub: 'Things I built, am building,\nor abandoned lovingly.', bg: '#E8F0E9', rotate: '1deg', href: '/projects' },
@@ -221,7 +221,7 @@ export default function HomePage() {
           <div className="section-stamp tomato">feed</div>
           <h2 className="section-title">Recently Tended</h2>
         </div>
-        <div style={{ display: 'flex', gap: 18 }}>
+        <div className="feed-grid" style={{ display: 'flex', gap: 18 }}>
           {(posts.length > 0 ? posts.map(p => ({ slug: p.slug, tag: p.tag, date: p.date, title: p.title, excerpt: p.excerpt, href: `/notes/${p.slug}` }))
             : [
               { slug: '', tag: 'note' as const, date: 'Apr 28, 2026', title: 'Về việc học chậm và thích nghi với nó', excerpt: 'Không phải mọi thứ đều cần nhanh. Đôi khi học chậm lại là cách duy nhất để hiểu thật sự...', href: '/notes' },
@@ -264,7 +264,7 @@ export default function HomePage() {
           <h2 className="section-title">Project Shelf</h2>
         </div>
         <div className="reveal">
-          <div style={{
+          <div className="shelf-row" style={{
             display: 'flex', gap: 6, alignItems: 'flex-end', height: 200,
             paddingBottom: 2, borderBottom: '3px solid var(--ink-lt)', position: 'relative',
           }}>
@@ -293,8 +293,8 @@ export default function HomePage() {
           <div className="section-stamp tomato">the gardener</div>
           <h2 className="section-title">About Hưng</h2>
         </div>
-        <div style={{ display: 'flex', gap: 44 }}>
-          <div className="reveal" style={{ flex: '0 0 260px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="about-content" style={{ display: 'flex', gap: 44 }}>
+          <div className="about-portrait reveal" style={{ flex: '0 0 260px', display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ position: 'relative', width: 'fit-content' }}>
               <div className="tape" style={{ top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)' }} />
               <div style={{
