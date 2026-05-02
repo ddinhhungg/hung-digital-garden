@@ -27,14 +27,14 @@ export default function NotesPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {posts.map((post, i) => (
             <Link key={post.slug} href={`/notes/${post.slug}`}
-              className={`reveal reveal-delay-${Math.min(i + 1, 4)}`}
+              className={`notes-item reveal reveal-delay-${Math.min(i + 1, 4)}`}
               style={{
                 background: 'var(--paper)',
                 borderRadius: '9px 7px 10px 8px / 8px 9px 7px 10px',
                 border: '1.5px solid var(--cream-dk)',
                 padding: '20px 22px 16px',
                 display: 'flex', gap: 20, alignItems: 'flex-start',
-                textDecoration: 'none', transition: 'transform 0.2s, box-shadow 0.2s',
+                textDecoration: 'none',
               }}
             >
               <div style={{ flex: 1 }}>

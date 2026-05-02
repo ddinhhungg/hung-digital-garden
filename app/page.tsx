@@ -75,14 +75,13 @@ export default function HomePage() {
           <div className="reveal reveal-delay-3" style={{
             display: 'flex', gap: 14, alignItems: 'center', position: 'relative', zIndex: 2,
           }}>
-            <a href="#garden-map" style={{
+            <a href="#garden-map" className="hero-cta" style={{
               background: 'var(--tomato)', color: 'var(--cream)',
               fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.12em',
               padding: '10px 22px', border: 'none', borderRadius: '7px 5px 8px 6px',
               cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
-              transition: 'all 0.2s',
             }}>explore the garden →</a>
-            <Link href="/notes" style={{
+            <Link href="/notes" className="hero-read-link" style={{
               fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-muted)',
               textDecoration: 'none',
             }}>or just read</Link>
@@ -158,7 +157,7 @@ export default function HomePage() {
               { icon: '🗺️', label: 'journey', href: '/journey' },
               { icon: '💬', label: 'thoughts', href: '/thoughts' },
             ].map(card => (
-              <Link key={card.label} href={card.href} style={{
+              <Link key={card.label} href={card.href} className="hero-nav-card" style={{
                 flex: 1, background: 'var(--paper)',
                 borderRadius: '8px 6px 9px 7px / 7px 8px 6px 9px',
                 border: '1.5px solid var(--cream-dk)',
@@ -197,13 +196,12 @@ export default function HomePage() {
             { icon: '💬', title: 'Thoughts', sub: 'Opinions, observations,\nand little sparks.', bg: '#F5EDDF', rotate: '1.5deg', href: '/thoughts' },
           ].map((card, i) => (
             <Link key={card.title} href={card.href}
-              className={`reveal reveal-delay-${i + 1}`}
+              className={`map-card reveal reveal-delay-${i + 1}`}
               style={{
                 flex: 1, borderRadius: '10px 8px 11px 9px / 9px 11px 8px 10px',
                 border: '1.5px solid rgba(70,50,30,0.13)',
                 padding: '24px 20px 18px', cursor: 'pointer', position: 'relative',
                 background: card.bg, transform: `rotate(${card.rotate})`,
-                transition: 'transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s',
                 textDecoration: 'none', display: 'block', overflow: 'hidden',
               }}
             >
@@ -232,7 +230,7 @@ export default function HomePage() {
             ]
           ).map((post, i) => (
             <Link key={i} href={post.href}
-              className={`reveal reveal-delay-${i + 1}`}
+              className={`feed-card reveal reveal-delay-${i + 1}`}
               style={{
                 flex: 1, background: 'var(--cream)',
                 borderRadius: '9px 7px 10px 8px / 8px 9px 7px 10px',
