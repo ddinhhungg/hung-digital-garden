@@ -1,0 +1,114 @@
+---
+title: "Tôi đã làm website cá nhân đầu tiên như thế nào — với AI"
+title_en: "how i built my first personal website with AI"
+date: "May 2, 2026"
+tag: "project"
+readTime: 8
+excerpt: "Từ cái ý tưởng mờ nhạt lúc 2 giờ sáng cho đến một website thật sự có tên miền. Không biết code. Không biết design. Nhưng biết mình muốn gì — và biết cách nói chuyện với AI."
+tags: ["build-in-public", "ai", "process", "personal"]
+---
+
+Tôi muốn có một website cá nhân từ... lâu lắm rồi. Không nhớ chính xác từ khi nào, nhưng cái cảm giác đó cứ xuất hiện đều đặn — mỗi lần đọc blog của ai đó, mỗi lần thấy portfolio của người khác, mỗi lần tự hỏi *"mình có gì để để lại không?"*
+
+Vấn đề là: tôi không biết code. Không biết design theo nghĩa kỹ thuật. Và mỗi lần Google "how to make a website" là lại thấy một rừng tutorial nói về HTML/CSS/JavaScript mà không biết bắt đầu từ đâu.
+
+Cho đến tháng 4 năm nay.
+
+<div className="article-img-placeholder">[ ảnh: màn hình notebook với những sketch idea ban đầu ]</div>
+<p className="article-img-caption">Nơi mọi thứ bắt đầu — một trang giấy với vài câu hỏi lộn xộn</p>
+
+## Cái ý tưởng mờ nhạt lúc đầu
+
+Tôi không có một bản kế hoạch cụ thể. Chỉ có một vài cảm giác:
+
+- Muốn một chỗ để viết — không phải Facebook, không phải blog công khai áp lực, mà là *chỗ của mình*
+- Muốn nó trông giống một *cuốn sổ tay*, có cảm giác tay — không phải template corporate
+- Muốn có thể cập nhật dễ dàng, không phải học code mỗi lần muốn thêm bài
+
+<mark>Cái khó không phải là không biết làm. Cái khó là không biết bắt đầu mô tả những gì mình muốn.</mark>
+
+Rồi tôi nghĩ: thay vì hỏi Google, thử nói chuyện với AI xem sao.
+
+## Bước 1 — Brief: nói chuyện như nói với một người
+
+Tôi mở Claude lên và... không biết hỏi gì. Nên tôi làm điều đơn giản nhất: kể về mình.
+
+Tôi nói tôi là ai, tôi làm gì, tôi đọc gì, tôi thích không gian như thế nào. Tôi mô tả cái cảm giác tôi muốn khi người ta mở trang web ra — *"như đang nhìn vào cuốn sổ tay của một người đang tư duy"*. Tôi nói tôi thích serif font, tôi thích màu warm, tôi không thích thứ gì quá phẳng và corporate.
+
+Không có một keyword kỹ thuật nào. Thuần cảm xúc.
+
+> "Mình muốn nó trông như trang giấy đã được dùng — có vết nhàu, có chữ nghiêng, có cảm giác ai đó đang viết trong đó chứ không phải publish."
+
+Claude hỏi lại. Tôi trả lời. Nó hỏi tiếp. Sau khoảng 20 phút, một cái spec xuất hiện — một bản mô tả chi tiết về màu sắc, typography, layout, cảm xúc mà trang cần truyền tải.
+
+Lần đầu tiên tôi thấy cái thứ mình muốn được viết ra rõ ràng.
+
+<div className="article-img-placeholder">[ ảnh: screenshot đoạn chat brief với Claude — câu hỏi và câu trả lời mô tả design ]</div>
+<p className="article-img-caption">Đoạn brief — nơi ý tưởng mờ nhạt được cụ thể hóa thành ngôn ngữ design</p>
+
+## Bước 2 — Design: từ chữ thành hình
+
+Spec đó được đưa vào Claude Design — một công cụ AI chuyên về thiết kế giao diện.
+
+Tôi không đưa ra một mockup nào. Không có wireframe. Chỉ có đoạn text mô tả từ bước trước, và một vài trang web tôi thích làm tham khảo.
+
+Kết quả đầu tiên ra có 3 phiên bản khác nhau. Tôi chọn cái trông như *"trang trải mở cuốn sổ tay"* — hai trang song song, bên trái là chữ, bên phải là hình ảnh và điều hướng.
+
+Nhưng chọn xong chưa phải là xong. Phần này tốn thời gian nhất — không phải vì AI không hiểu, mà vì *tôi* chưa biết chính xác mình muốn gì cho đến khi nhìn thấy cái mình không muốn.
+
+*"Cái này quá cứng, thêm chút texture vào."*
+*"Font này đẹp nhưng hơi nặng, nhẹ hơn một chút."*
+*"Màu này gần đúng rồi, nhưng warm hơn."*
+
+Dần dần, sau nhiều vòng lặp, cái design hiện tại xuất hiện.
+
+<div className="article-img-placeholder">[ ảnh: 3 bản design đầu tiên được tạo ra — so sánh các phiên bản ]</div>
+<p className="article-img-caption">3 phiên bản ban đầu — chọn cái trông như trang sổ tay mở ra</p>
+
+## Bước 3 — Code: không phải tôi viết, nhưng tôi hiểu
+
+Đây là phần tôi sợ nhất.
+
+*Code.* Cái thứ mà tôi nghĩ mình sẽ không bao giờ động vào.
+
+Nhưng thực ra thứ tôi làm là: đưa design cho Claude Code, nói *"làm cái này bằng Next.js, tôi muốn tự viết bài bằng Markdown, deploy lên GitHub Pages"*. Rồi ngồi xem nó làm.
+
+Điều kỳ lạ xảy ra: tôi bắt đầu hiểu được những gì đang xảy ra. Không phải hiểu từng dòng code — nhưng hiểu *logic*. Tại sao file này liên quan đến file kia. Tại sao cái animation chạy như vậy. Tại sao khi tôi thay một chữ ở một chỗ thì trang web thay đổi.
+
+<mark>Học code không phải là học cú pháp. Học code là học cách tư duy về cấu trúc. Và AI giúp tôi làm điều đó mà không cần phải ghi nhớ syntax.</mark>
+
+Những lần đầu mọi thứ bị lỗi khá nhiều — animation không chạy đúng, trang điện thoại vỡ layout, video không hiển thị. Nhưng từng cái một được fix. Tôi học từ mỗi lần fix nhiều hơn từ bất kỳ tutorial nào.
+
+<div className="article-img-placeholder">[ ảnh: GitHub Actions chạy — workflow deploy tự động ]</div>
+<p className="article-img-caption">Mỗi lần push code, GitHub Actions tự động build và deploy — khoảng 2 phút</p>
+
+## Bước 4 — Deploy: cái lần đầu tiên trang web có tên miền thật
+
+Tôi nhớ cái khoảnh khắc mở `ddinhhungg.github.io` lần đầu tiên.
+
+Không phải localhost. Không phải preview. Một địa chỉ thật, trên internet, ai cũng có thể truy cập. Tôi gửi link cho một người bạn. Họ mở ra và nói *"ồ đẹp ghê"*.
+
+Cái cảm giác đó... khó diễn tả. Không phải tự hào vì làm được thứ gì ghê gớm — mà là cảm giác một ý tưởng mờ nhạt từ vài tuần trước đã trở thành thứ *có thật*, *có thể chạm vào được*.
+
+<div className="article-img-placeholder">[ ảnh: screenshot trang web live lần đầu tiên — ddinhhungg.github.io ]</div>
+<p className="article-img-caption">Trang web live — từ ý tưởng đến thực tế trong khoảng 3 tuần</p>
+
+<div className="article-divider">· · ·</div>
+
+## Những thứ tôi học được
+
+**AI không thay thế quyết định.** Nó thực thi rất nhanh, nhưng hướng đi vẫn phải từ mình. Mỗi lần tôi không biết mình muốn gì, AI cũng lạc. Mỗi lần tôi biết rõ mình muốn gì — dù không biết kỹ thuật — nó làm được.
+
+**Ngôn ngữ quan trọng hơn code.** Khả năng mô tả chính xác điều mình muốn — bằng chữ, bằng cảm xúc, bằng ví dụ — có giá trị ngang với biết code. Có lẽ hơn.
+
+**Làm thật quan trọng hơn học lý thuyết.** Tôi học được nhiều nhất từ những lần bị lỗi và phải debug, không phải từ những khi mọi thứ chạy trơn. Không có con đường tắt cho việc hiểu — nhưng có con đường ngắn hơn để *làm*.
+
+**Và điều quan trọng nhất:** Cái rào cản lớn nhất không phải là kỹ thuật. Là cái câu hỏi *"mình có đủ tư cách để làm điều này không?"*
+
+Câu trả lời là có. Luôn luôn là có.
+
+<div className="article-divider">· · ·</div>
+
+Trang này bạn đang đọc — với cái animation lật sách, với những dòng kẻ ngang, với màu ấm và font serif — là kết quả của cuộc trò chuyện đó. Không phải của một người biết code. Mà của một người biết mình muốn gì và đủ kiên nhẫn để nói chuyện với AI cho đến khi nó hiểu.
+
+Nếu bạn cũng đang muốn làm điều gì đó nhưng không biết bắt đầu từ đâu — hãy bắt đầu bằng cách mô tả cảm xúc. Kỹ thuật là thứ có thể học sau.
