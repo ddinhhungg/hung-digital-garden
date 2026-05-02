@@ -273,6 +273,13 @@ body::after {
   transition: background 0.15s, color 0.15s;
 }
 .social-pill:hover { background: rgba(255,255,255,0.18); color: rgba(255,255,255,1); }
+.social-pill-dark {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em;
+  color: var(--ink-lt); text-decoration: none;
+  border: 1px solid var(--cream-dk); padding: 4px 9px; border-radius: 2px;
+  background: var(--cream); transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.social-pill-dark:hover { background: var(--cream-dk); color: var(--ink); border-color: var(--ink-muted); }
 
 /* Garden-map sticky cards — use individual `translate` to not fight with inline rotate() */
 .map-card {

@@ -7,8 +7,8 @@ import { getAllPosts } from '@/lib/posts';
 
 // Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
 const PORTRAIT_SRC = '/portrait.jpg';
-// YouTube Short ID (phần sau youtu.be/ hoặc shorts/)
-const YOUTUBE_ID = '9Tr1uH1nnvQ';
+// Local video (recommended). YouTube embed requires "Allow embedding" to be ON in YouTube Studio.
+const VIDEO_SRC = '/intro.mp4';
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
@@ -90,83 +90,39 @@ export default function HomePage() {
 
         {/* Right page */}
         <div className="hero-right" style={{
-          flex: 1, padding: '32px 44px 0 48px',
+          flex: 1, padding: '28px 44px 0 48px',
           display: 'flex', flexDirection: 'column',
           position: 'relative', overflow: 'hidden',
         }}>
-          {/* Portrait — small, top center */}
-          <div className="reveal reveal-delay-1" style={{ display: 'flex', justifyContent: 'center', paddingBottom: 20 }}>
-            <div style={{ position: 'relative', width: 'fit-content' }}>
-              <div className="tape" style={{ top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)' }} />
-              <div style={{
-                width: 110, height: 110, background: 'var(--cream-dk)', borderRadius: '50%',
-                border: PORTRAIT_SRC ? '2px solid var(--cream-dkr)' : '1.5px dashed var(--ink-muted)',
-                overflow: 'hidden', boxShadow: '0 4px 14px rgba(28,20,16,0.12)',
-              }}>
-                {PORTRAIT_SRC ? (
-                  <img src={PORTRAIT_SRC} alt="Hưng" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                    <div style={{ fontFamily: 'var(--serif)', fontSize: 42, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.4 }}>H</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Video — large, fills most of the column */}
-          <div className="hero-video reveal reveal-delay-2" style={{
-            flex: 1, minHeight: 260, width: '100%',
+          {/* Video — fills most of the column */}
+          <div className="hero-video reveal reveal-delay-1" style={{
+            flex: 1, minHeight: 300, width: '100%',
             background: 'linear-gradient(135deg, #2A1F1A 0%, #1C1410 55%, #2D2520 100%)',
             borderRadius: '10px 8px 10px 8px / 8px 10px 8px 10px',
             border: '1.5px solid var(--ink-lt)',
             position: 'relative', overflow: 'hidden',
           }}>
-            {YOUTUBE_ID ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&modestbranding=1&playsinline=1&rel=0`}
-                title="intro video"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-              />
+            {VIDEO_SRC ? (
+              <video
+                autoPlay muted loop playsInline
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              >
+                <source src={VIDEO_SRC} type="video/mp4" />
+              </video>
             ) : (
-              <>
-                <div style={{ position: 'absolute', inset: 0, opacity: 0.06, pointerEvents: 'none',
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)',
-                }} />
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                  <div style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: 0, height: 0, marginLeft: 4, borderTop: '9px solid transparent', borderBottom: '9px solid transparent', borderLeft: '15px solid rgba(255,255,255,0.7)' }} />
-                  </div>
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                    intro video / ambient loop
-                  </div>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  intro video
                 </div>
-              </>
-            )}
-            {/* Social links overlay — bottom of video */}
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)',
-              padding: '28px 14px 10px',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              zIndex: 3,
-            }}>
-              <span style={{ fontFamily: 'var(--hand)', fontSize: 12, color: 'rgba(255,255,255,0.55)', transform: 'rotate(-0.5deg)' }}>
-                more videos →
-              </span>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <a href="https://www.tiktok.com/@hungg_ddinh" target="_blank" rel="noopener noreferrer" className="social-pill">tiktok ↗</a>
-                <a href="https://www.instagram.com/ddinh_hungg/" target="_blank" rel="noopener noreferrer" className="social-pill">instagram ↗</a>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Quick nav cards — overlap the bottom of video */}
-          <div className="hero-quicknav reveal reveal-delay-3" style={{
+          <div className="hero-quicknav reveal reveal-delay-2" style={{
             display: 'flex', gap: 10,
             position: 'relative', zIndex: 2,
-            marginTop: -28, marginBottom: 20,
+            marginTop: -28, marginBottom: 12,
             paddingLeft: 4, paddingRight: 4,
           }}>
             {[
@@ -189,6 +145,20 @@ export default function HomePage() {
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)' }}>— entries</span>
               </TransitionLink>
             ))}
+          </div>
+
+          {/* Social links row */}
+          <div className="reveal reveal-delay-3" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            paddingLeft: 4, paddingRight: 4, marginBottom: 14,
+          }}>
+            <span style={{ fontFamily: 'var(--hand)', fontSize: 12, color: 'var(--ink-muted)', transform: 'rotate(-0.4deg)' }}>
+              more videos →
+            </span>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <a href="https://www.tiktok.com/@hungg_ddinh" target="_blank" rel="noopener noreferrer" className="social-pill-dark">tiktok ↗</a>
+              <a href="https://www.instagram.com/ddinh_hungg/" target="_blank" rel="noopener noreferrer" className="social-pill-dark">instagram ↗</a>
+            </div>
           </div>
 
           {/* Scroll hint */}
