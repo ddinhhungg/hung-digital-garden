@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import TransitionLink from "@/components/TransitionLink";
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Nav from '@/components/Nav';
 import ScrollReveal from '@/components/ScrollReveal';
@@ -47,9 +47,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* HEADER */}
           <header className="article-header reveal">
             <div className="article-breadcrumb">
-              <Link href="/">home</Link>
+              <TransitionLink href="/">home</TransitionLink>
               <span className="breadcrumb-sep">/</span>
-              <Link href="/notes">notes</Link>
+              <TransitionLink href="/notes">notes</TransitionLink>
               <span className="breadcrumb-sep">/</span>
               <span>{post.title_en || post.title}</span>
             </div>
@@ -116,11 +116,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <div className="next-up-title">→ tiếp theo trong vườn</div>
                 <div className="next-cards">
                   {nextPosts.map((next, i) => (
-                    <Link key={next.slug} href={`/notes/${next.slug}`} className="next-card" style={i === 2 ? { transform: 'rotate(0.5deg)' } : {}}>
+                    <TransitionLink key={next.slug} href={`/notes/${next.slug}`} className="next-card" style={i === 2 ? { transform: 'rotate(0.5deg)' } : {}}>
                       <div className="next-card-tag">{next.tag}</div>
                       <div className="next-card-title">{next.title}</div>
                       <div className="next-card-link">đọc tiếp →</div>
-                    </Link>
+                    </TransitionLink>
                   ))}
                 </div>
               </>
@@ -129,12 +129,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
           {/* BACK STRIP */}
           <div className="back-strip reveal">
-            <Link href="/" className="back-link">
+            <TransitionLink href="/" className="back-link">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <path d="M10 3L5 8l5 5"/>
               </svg>
               ← back to the garden
-            </Link>
+            </TransitionLink>
             <div className="back-note">cảm ơn bạn đã đọc ☁</div>
           </div>
         </div>

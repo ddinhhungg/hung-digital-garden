@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import TransitionLink from '@/components/TransitionLink';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import ScrollReveal from '@/components/ScrollReveal';
@@ -26,7 +26,7 @@ export default function NotesPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {posts.map((post, i) => (
-            <Link key={post.slug} href={`/notes/${post.slug}`}
+            <TransitionLink key={post.slug} href={`/notes/${post.slug}`}
               className={`notes-item reveal reveal-delay-${Math.min(i + 1, 4)}`}
               style={{
                 background: 'var(--paper)',
@@ -52,7 +52,7 @@ export default function NotesPage() {
                 <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-lt)', lineHeight: 1.75 }}>{post.excerpt}</div>
               </div>
               <span style={{ fontFamily: 'var(--hand)', fontSize: 16, color: 'var(--tomato)', flexShrink: 0, marginTop: 4 }}>read →</span>
-            </Link>
+            </TransitionLink>
           ))}
 
           {posts.length === 0 && (

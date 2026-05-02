@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import TransitionLink from '@/components/TransitionLink';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import ScrollReveal from '@/components/ScrollReveal';
@@ -81,10 +81,10 @@ export default function HomePage() {
               padding: '10px 22px', border: 'none', borderRadius: '7px 5px 8px 6px',
               cursor: 'pointer', textDecoration: 'none', display: 'inline-block',
             }}>explore the garden →</a>
-            <Link href="/notes" className="hero-read-link" style={{
+            <TransitionLink href="/notes" className="hero-read-link" style={{
               fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-muted)',
               textDecoration: 'none',
-            }}>or just read</Link>
+            }}>or just read</TransitionLink>
           </div>
         </div>
 
@@ -157,7 +157,7 @@ export default function HomePage() {
               { icon: '🗺️', label: 'journey', href: '/journey' },
               { icon: '💬', label: 'thoughts', href: '/thoughts' },
             ].map(card => (
-              <Link key={card.label} href={card.href} className="hero-nav-card" style={{
+              <TransitionLink key={card.label} href={card.href} className="hero-nav-card" style={{
                 flex: 1, background: 'var(--paper)',
                 borderRadius: '8px 6px 9px 7px / 7px 8px 6px 9px',
                 border: '1.5px solid var(--cream-dk)',
@@ -168,7 +168,7 @@ export default function HomePage() {
                 <span style={{ fontSize: 15 }}>{card.icon}</span>
                 <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-lt)' }}>{card.label}</span>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)' }}>— entries</span>
-              </Link>
+              </TransitionLink>
             ))}
           </div>
 
@@ -195,7 +195,7 @@ export default function HomePage() {
             { icon: '🗺️', title: 'Journey', sub: 'Timeline of growth, milestones,\nand turning points.', bg: '#F0E8F0', rotate: '-0.8deg', href: '/journey' },
             { icon: '💬', title: 'Thoughts', sub: 'Opinions, observations,\nand little sparks.', bg: '#F5EDDF', rotate: '1.5deg', href: '/thoughts' },
           ].map((card, i) => (
-            <Link key={card.title} href={card.href}
+            <TransitionLink key={card.title} href={card.href}
               className={`map-card reveal reveal-delay-${i + 1}`}
               style={{
                 flex: 1, borderRadius: '10px 8px 11px 9px / 9px 11px 8px 10px',
@@ -210,7 +210,7 @@ export default function HomePage() {
               <div style={{ fontFamily: 'var(--serif)', fontSize: 17, fontWeight: 600, color: 'var(--ink)', marginBottom: 6 }}>{card.title}</div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ink-lt)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{card.sub}</div>
               <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--tomato)', marginTop: 14, display: 'block' }}>wander in →</span>
-            </Link>
+            </TransitionLink>
           ))}
         </div>
       </section>
@@ -229,7 +229,7 @@ export default function HomePage() {
               { slug: '', tag: 'thought' as const, date: 'Apr 12, 2026', title: 'Sự đơn giản không có nghĩa là dễ dàng', excerpt: 'Cái khó nhất không phải làm phức tạp — mà là biết dừng lại đúng lúc và không thêm gì thêm nữa.', href: '/notes' },
             ]
           ).map((post, i) => (
-            <Link key={i} href={post.href}
+            <TransitionLink key={i} href={post.href}
               className={`feed-card reveal reveal-delay-${i + 1}`}
               style={{
                 flex: 1, background: 'var(--cream)',
@@ -252,7 +252,7 @@ export default function HomePage() {
               <div style={{ fontFamily: 'var(--serif)', fontSize: 14, fontWeight: 600, color: 'var(--ink)', lineHeight: 1.4 }}>{post.title}</div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ink-lt)', lineHeight: 1.75 }}>{post.excerpt}</div>
               <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--tomato)' }}>read more →</span>
-            </Link>
+            </TransitionLink>
           ))}
         </div>
       </section>

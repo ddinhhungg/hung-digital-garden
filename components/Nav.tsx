@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import TransitionLink from '@/components/TransitionLink';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -20,19 +20,19 @@ export default function Nav({ showBack = false }: NavProps) {
 
   return (
     <nav className={`site-nav${scrolled ? ' scrolled' : ''}`}>
-      <Link href="/" className="nav-logo">{"Hưng's Garden"}</Link>
+      <TransitionLink href="/" className="nav-logo">{"Hưng's Garden"}</TransitionLink>
 
       <div className="nav-links">
-        <Link href="/" className={pathname === '/' ? 'active' : ''}>home</Link>
-        <Link href="/notes" className={pathname.startsWith('/notes') ? 'active' : ''}>notes</Link>
-        <Link href="/projects" className={pathname === '/projects' ? 'active' : ''}>projects</Link>
-        <Link href="/journey" className={pathname === '/journey' ? 'active' : ''}>journey</Link>
-        <Link href="/thoughts" className={pathname === '/thoughts' ? 'active' : ''}>thoughts</Link>
-        <Link href="/#about" className={pathname === '/about' ? 'active' : ''}>about</Link>
+        <TransitionLink href="/" className={pathname === '/' ? 'active' : ''}>home</TransitionLink>
+        <TransitionLink href="/notes" className={pathname.startsWith('/notes') ? 'active' : ''}>notes</TransitionLink>
+        <TransitionLink href="/projects" className={pathname === '/projects' ? 'active' : ''}>projects</TransitionLink>
+        <TransitionLink href="/journey" className={pathname === '/journey' ? 'active' : ''}>journey</TransitionLink>
+        <TransitionLink href="/thoughts" className={pathname === '/thoughts' ? 'active' : ''}>thoughts</TransitionLink>
+        <TransitionLink href="/#about" className={pathname === '/about' ? 'active' : ''}>about</TransitionLink>
       </div>
 
       {showBack ? (
-        <Link href="/" className="nav-back" style={{
+        <TransitionLink href="/" className="nav-back" style={{
           display: 'flex', alignItems: 'center', gap: 8,
           fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.08em',
           color: 'var(--ink-muted)', textDecoration: 'none',
@@ -42,7 +42,7 @@ export default function Nav({ showBack = false }: NavProps) {
             <path d="M10 3L5 8l5 5"/>
           </svg>
           back to garden
-        </Link>
+        </TransitionLink>
       ) : (
         <div className="nav-meta">☀ growing since 2024</div>
       )}
