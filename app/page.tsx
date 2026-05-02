@@ -7,8 +7,7 @@ import { getAllPosts } from '@/lib/posts';
 
 // Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
 const PORTRAIT_SRC = '/portrait.jpg';
-// Local video (recommended). YouTube embed requires "Allow embedding" to be ON in YouTube Studio.
-const VIDEO_SRC = '/intro.mp4';
+const YOUTUBE_ID = 'MjbkHcix5ns';
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
@@ -97,25 +96,17 @@ export default function HomePage() {
           {/* Video — fills most of the column */}
           <div className="hero-video reveal reveal-delay-1" style={{
             flex: 1, minHeight: 300, width: '100%',
-            background: 'linear-gradient(135deg, #2A1F1A 0%, #1C1410 55%, #2D2520 100%)',
+            background: '#0a0a0a',
             borderRadius: '10px 8px 10px 8px / 8px 10px 8px 10px',
             border: '1.5px solid var(--ink-lt)',
             position: 'relative', overflow: 'hidden',
           }}>
-            {VIDEO_SRC ? (
-              <video
-                autoPlay muted loop playsInline
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-              >
-                <source src={VIDEO_SRC} type="video/mp4" />
-              </video>
-            ) : (
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  intro video
-                </div>
-              </div>
-            )}
+            <iframe
+              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&playsinline=1&rel=0`}
+              title="intro video"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+            />
           </div>
 
           {/* Quick nav cards — overlap the bottom of video */}
