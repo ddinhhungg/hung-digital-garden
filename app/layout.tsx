@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import PageLoader from "@/components/PageLoader";
+
+const GA_ID = "G-B5NL88M9F0";
 
 export const metadata: Metadata = {
   title: "Hưng's Garden",
@@ -21,6 +24,18 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+          `}
+        </Script>
         <PageLoader />
         {children}
       </body>
