@@ -7,7 +7,7 @@ import { getAllPosts } from '@/lib/posts';
 
 // Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
 const PORTRAIT_SRC = '/portrait.jpg';
-const YOUTUBE_ID = 'MjbkHcix5ns';
+const VIDEO_SRC = '/intro.mp4';
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
@@ -96,17 +96,17 @@ export default function HomePage() {
           {/* Video — fills most of the column */}
           <div className="hero-video reveal reveal-delay-1" style={{
             flex: 1, minHeight: 300, width: '100%',
-            background: '#0a0a0a',
+            background: '#111',
             borderRadius: '10px 8px 10px 8px / 8px 10px 8px 10px',
             border: '1.5px solid var(--ink-lt)',
             position: 'relative', overflow: 'hidden',
           }}>
-            <iframe
-              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&playsinline=1&rel=0`}
-              title="intro video"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-            />
+            <video
+              autoPlay muted loop playsInline
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            >
+              <source src={VIDEO_SRC} type="video/mp4" />
+            </video>
           </div>
 
           {/* Quick nav cards — overlap the bottom of video */}
