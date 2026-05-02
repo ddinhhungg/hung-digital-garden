@@ -644,7 +644,7 @@ footer.site-footer {
   footer.site-footer { padding: 20px; flex-direction: column; gap: 16px; text-align: center; }
   .article-wrap { grid-template-columns: 1fr; padding: 32px 20px 60px; }
   .article-header, .article-body, .article-footer { grid-column: 1 / -1; }
-  .margin-col { display: none; }
+  .margin-col { display: none; } /* hidden in 900px, overridden below for mobile */
   .back-strip { grid-column: 1 / -1; }
   .ruler { display: none; }
   .next-cards { flex-wrap: wrap; }
@@ -688,8 +688,8 @@ footer.site-footer {
     padding: 28px 20px 32px !important;
     gap: 24px !important;
   }
-  /* Hide video on mobile to save space */
-  .hero-right > .reveal.reveal-delay-2 { display: none !important; }
+  /* Video: full width, fixed height on mobile */
+  .hero-video { min-height: 200px !important; flex: none !important; }
   /* Quick nav: 2×2 grid */
   .hero-quicknav {
     display: grid !important;
@@ -733,6 +733,35 @@ footer.site-footer {
   .next-cards { flex-direction: column !important; }
   .next-card { min-width: 0 !important; }
   .back-strip { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+
+  /* Margin notes: show as inline block below article on mobile */
+  .margin-col {
+    display: block !important;
+    position: static !important;
+    grid-column: 1 / -1 !important;
+    margin-top: 36px;
+    padding: 20px 16px;
+    background: var(--cream-dk);
+    border-radius: 8px 6px 9px 7px;
+    border-left: 3px solid var(--tomato-lt);
+  }
+  .margin-col::before {
+    content: 'ghi chú bên lề';
+    display: block;
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--tomato); margin-bottom: 14px;
+  }
+  .margin-note {
+    position: static !important;
+    display: block;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 1.5px solid rgba(181,52,30,0.3);
+    max-width: 100% !important;
+    transform: none !important;
+  }
+  .margin-note::before { display: none; }
+  .margin-note.sage { border-left-color: var(--sage-lt); }
 
   /* Notes listing */
   .notes-item { flex-direction: column !important; gap: 12px !important; }

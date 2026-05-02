@@ -90,40 +90,37 @@ export default function HomePage() {
 
         {/* Right page */}
         <div className="hero-right" style={{
-          flex: 1, padding: '40px 44px 40px 48px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-          position: 'relative',
+          flex: 1, padding: '32px 44px 0 48px',
+          display: 'flex', flexDirection: 'column',
+          position: 'relative', overflow: 'hidden',
         }}>
-          {/* Portrait */}
-          <div className="reveal reveal-delay-1" style={{ display: 'flex', justifyContent: 'center', padding: '4px 0 8px' }}>
+          {/* Portrait — small, top center */}
+          <div className="reveal reveal-delay-1" style={{ display: 'flex', justifyContent: 'center', paddingBottom: 20 }}>
             <div style={{ position: 'relative', width: 'fit-content' }}>
               <div className="tape" style={{ top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)' }} />
               <div style={{
-                width: 140, height: 140, background: 'var(--cream-dk)', borderRadius: '50%',
-                border: PORTRAIT_SRC ? '1.5px solid var(--cream-dkr)' : '1.5px dashed var(--ink-muted)',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: 6, overflow: 'hidden',
+                width: 110, height: 110, background: 'var(--cream-dk)', borderRadius: '50%',
+                border: PORTRAIT_SRC ? '2px solid var(--cream-dkr)' : '1.5px dashed var(--ink-muted)',
+                overflow: 'hidden', boxShadow: '0 4px 14px rgba(28,20,16,0.12)',
               }}>
                 {PORTRAIT_SRC ? (
                   <img src={PORTRAIT_SRC} alt="Hưng" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <>
-                    <div style={{ fontFamily: 'var(--serif)', fontSize: 52, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.4 }}>H</div>
-                    <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>portrait<br />photo here</div>
-                  </>
+                  <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                    <div style={{ fontFamily: 'var(--serif)', fontSize: 42, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.4 }}>H</div>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Video */}
-          <div className="reveal reveal-delay-2" style={{
-            height: 220, width: '100%',
+          {/* Video — large, fills most of the column */}
+          <div className="hero-video reveal reveal-delay-2" style={{
+            flex: 1, minHeight: 260, width: '100%',
             background: 'linear-gradient(135deg, #2A1F1A 0%, #1C1410 55%, #2D2520 100%)',
-            borderRadius: '9px 7px 10px 8px / 8px 10px 7px 9px',
+            borderRadius: '10px 8px 10px 8px / 8px 10px 8px 10px',
             border: '1.5px solid var(--ink-lt)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 8, position: 'relative', overflow: 'hidden', cursor: VIDEO_SRC ? 'default' : 'pointer',
+            position: 'relative', overflow: 'hidden',
           }}>
             {VIDEO_SRC ? (
               <video
@@ -136,11 +133,13 @@ export default function HomePage() {
                 <div style={{ position: 'absolute', inset: 0, opacity: 0.06, pointerEvents: 'none',
                   backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)',
                 }} />
-                <div style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ width: 0, height: 0, marginLeft: 4, borderTop: '9px solid transparent', borderBottom: '9px solid transparent', borderLeft: '15px solid rgba(255,255,255,0.7)' }} />
-                </div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  intro video / ambient loop
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 0, height: 0, marginLeft: 4, borderTop: '9px solid transparent', borderBottom: '9px solid transparent', borderLeft: '15px solid rgba(255,255,255,0.7)' }} />
+                  </div>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    intro video / ambient loop
+                  </div>
                 </div>
                 <div style={{ position: 'absolute', bottom: 10, right: 12, fontFamily: 'var(--hand)', fontSize: 13, color: 'rgba(255,255,255,0.22)', transform: 'rotate(-1deg)' }}>
                   embed video ↗
@@ -149,8 +148,13 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Quick nav cards */}
-          <div className="hero-quicknav reveal reveal-delay-3" style={{ display: 'flex', gap: 10 }}>
+          {/* Quick nav cards — overlap the bottom of video */}
+          <div className="hero-quicknav reveal reveal-delay-3" style={{
+            display: 'flex', gap: 10,
+            position: 'relative', zIndex: 2,
+            marginTop: -28, marginBottom: 20,
+            paddingLeft: 4, paddingRight: 4,
+          }}>
             {[
               { icon: '📓', label: 'notes', href: '/notes' },
               { icon: '🌱', label: 'projects', href: '/projects' },
@@ -164,20 +168,13 @@ export default function HomePage() {
                 padding: '10px 10px 9px',
                 display: 'flex', flexDirection: 'column', gap: 3,
                 textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(28,20,16,0.10)',
               }}>
                 <span style={{ fontSize: 15 }}>{card.icon}</span>
                 <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-lt)' }}>{card.label}</span>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)' }}>— entries</span>
               </TransitionLink>
             ))}
-          </div>
-
-          <div className="reveal reveal-delay-4" style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14 }}>
-            <svg width="52" height="24" viewBox="0 0 52 24">
-              <path d="M2 12 Q22 5 40 12" stroke="#B5341E" strokeWidth="1.6" fill="none" strokeLinecap="round"/>
-              <path d="M35 6 L42 12 L35 18" stroke="#B5341E" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-muted)', transform: 'rotate(-0.5deg)' }}>latest updates below</span>
           </div>
         </div>
       </section>

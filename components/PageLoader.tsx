@@ -1,87 +1,74 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default function PageLoader() {
-  const router = useRouter();
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
-  const navHref = useRef<string | null>(null);
+  const pathname = usePathname();
+  const prevPathname = useRef(pathname);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const hide = () => {
-    setFading(true);
-    setTimeout(() => setVisible(false), 600);
+  const hide = (delay = 0) => {
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => {
+      setFading(true);
+      setTimeout(() => setVisible(false), 580);
+    }, delay);
   };
 
-  // Initial page load
+  // Initial page load — show until window.load + at least 1s
   useEffect(() => {
     const min = 1100;
     const t0 = Date.now();
-    const done = () => {
-      const wait = Math.max(0, min - (Date.now() - t0));
-      setTimeout(hide, wait);
-    };
-    if (document.readyState === 'complete') done();
-    else {
+    const done = () => hide(Math.max(0, min - (Date.now() - t0)));
+    if (document.readyState === 'complete') {
+      done();
+    } else {
       window.addEventListener('load', done, { once: true });
       const safety = setTimeout(done, 2800);
       return () => { window.removeEventListener('load', done); clearTimeout(safety); };
     }
   }, []);
 
-  // Page-to-page transition via custom event
+  // Show loader when any TransitionLink is clicked
   useEffect(() => {
-    const handler = (e: CustomEvent<{ href: string }>) => {
-      navHref.current = e.detail.href;
+    const handler = () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
       setVisible(true);
       setFading(false);
-      // Navigate after 750ms (mid-flip)
-      setTimeout(() => {
-        if (navHref.current) router.push(navHref.current);
-      }, 750);
-      // Hide 600ms after navigation
-      setTimeout(() => hide(), 1350);
     };
-    window.addEventListener('book-navigate' as any, handler);
-    return () => window.removeEventListener('book-navigate' as any, handler);
-  }, [router]);
+    window.addEventListener('book-show', handler);
+    return () => window.removeEventListener('book-show', handler);
+  }, []);
+
+  // Hide loader when navigation is complete (pathname changed)
+  useEffect(() => {
+    if (pathname !== prevPathname.current) {
+      prevPathname.current = pathname;
+      hide(350); // slight delay so page content can render first
+    }
+  }, [pathname]);
 
   if (!visible) return null;
 
   return (
     <div className={`page-loader${fading ? ' page-loader--hidden' : ''}`} aria-hidden="true">
-      {/* Book */}
       <div className="bk-scene">
         <div className="bk">
-          {/* Left half — already-read pages */}
-          <div className="bk-left">
-            <div className="bk-left__lines" />
-          </div>
-
-          {/* Spine */}
+          <div className="bk-left"><div className="bk-left__lines" /></div>
           <div className="bk-spine" />
-
-          {/* Right half — background (bottommost unturned page) */}
-          <div className="bk-right">
-            <div className="bk-right__lines" />
-          </div>
-
-          {/* Flipping pages (staggered) */}
+          <div className="bk-right"><div className="bk-right__lines" /></div>
           {[0, 1, 2, 3].map(i => (
             <div key={i} className={`bk-page bk-page--${i + 1}`}>
               <div className="bk-page__lines" />
-              <div className="bk-page__back">
-                <div className="bk-page__lines" />
-              </div>
+              <div className="bk-page__back"><div className="bk-page__lines" /></div>
             </div>
           ))}
-
-          {/* Table shadow beneath book */}
           <div className="bk-shadow" />
         </div>
       </div>
-
       <div className="loader-text">đợi mình lật trang khác nhé!</div>
     </div>
   );
