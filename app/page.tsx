@@ -7,8 +7,8 @@ import { getAllPosts } from '@/lib/posts';
 
 // Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
 const PORTRAIT_SRC = '/portrait.jpg';
-// Dán YouTube video ID (phần sau v=). Để '' nếu chưa có video.
-const YOUTUBE_ID = '';
+// Drop /public/intro.mp4 để dùng video local (muted autoplay loop). Để '' nếu chưa có.
+const VIDEO_SRC = '/intro.mp4';
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
@@ -124,14 +124,13 @@ export default function HomePage() {
             borderRadius: '9px 7px 10px 8px / 8px 10px 7px 9px',
             border: '1.5px solid var(--ink-lt)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 8, position: 'relative', overflow: 'hidden', cursor: YOUTUBE_ID ? 'default' : 'pointer',
+            gap: 8, position: 'relative', overflow: 'hidden', cursor: VIDEO_SRC ? 'default' : 'pointer',
           }}>
-            {YOUTUBE_ID ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&modestbranding=1&playsinline=1&rel=0`}
-                title="ambient loop"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+            {VIDEO_SRC ? (
+              <video
+                src={VIDEO_SRC}
+                autoPlay muted loop playsInline
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
               <>
