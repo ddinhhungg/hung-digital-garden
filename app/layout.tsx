@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import PageLoader from "@/components/PageLoader";
 
 export const metadata: Metadata = {
   title: "Hưng's Garden",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body>
+        <PageLoader />
+        {children}
+      </body>
     </html>
   );
 }

@@ -5,6 +5,11 @@ import ScrollReveal from '@/components/ScrollReveal';
 import BookSpine from '@/components/BookSpine';
 import { getAllPosts } from '@/lib/posts';
 
+// Drop /public/portrait.jpg để dùng ảnh thật. Để '' nếu chưa có.
+const PORTRAIT_SRC = '/portrait.jpg';
+// Dán YouTube video ID (phần sau v=). Để '' nếu chưa có video.
+const YOUTUBE_ID = '';
+
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
 
@@ -96,12 +101,18 @@ export default function HomePage() {
               <div className="tape" style={{ top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)' }} />
               <div style={{
                 width: 140, height: 140, background: 'var(--cream-dk)', borderRadius: '50%',
-                border: '1.5px dashed var(--ink-muted)',
+                border: PORTRAIT_SRC ? '1.5px solid var(--cream-dkr)' : '1.5px dashed var(--ink-muted)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: 6,
+                gap: 6, overflow: 'hidden',
               }}>
-                <div style={{ fontFamily: 'var(--serif)', fontSize: 52, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.4 }}>H</div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>portrait<br />photo here</div>
+                {PORTRAIT_SRC ? (
+                  <img src={PORTRAIT_SRC} alt="Hưng" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <>
+                    <div style={{ fontFamily: 'var(--serif)', fontSize: 52, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.4 }}>H</div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>portrait<br />photo here</div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -113,20 +124,31 @@ export default function HomePage() {
             borderRadius: '9px 7px 10px 8px / 8px 10px 7px 9px',
             border: '1.5px solid var(--ink-lt)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 8, position: 'relative', overflow: 'hidden', cursor: 'pointer',
+            gap: 8, position: 'relative', overflow: 'hidden', cursor: YOUTUBE_ID ? 'default' : 'pointer',
           }}>
-            <div style={{ position: 'absolute', inset: 0, opacity: 0.06, pointerEvents: 'none',
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)',
-            }} />
-            <div style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 0, height: 0, marginLeft: 4, borderTop: '9px solid transparent', borderBottom: '9px solid transparent', borderLeft: '15px solid rgba(255,255,255,0.7)' }} />
-            </div>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              intro video / ambient loop
-            </div>
-            <div style={{ position: 'absolute', bottom: 10, right: 12, fontFamily: 'var(--hand)', fontSize: 13, color: 'rgba(255,255,255,0.22)', transform: 'rotate(-1deg)' }}>
-              embed video ↗
-            </div>
+            {YOUTUBE_ID ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_ID}&controls=0&modestbranding=1&playsinline=1&rel=0`}
+                title="ambient loop"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              />
+            ) : (
+              <>
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.06, pointerEvents: 'none',
+                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)',
+                }} />
+                <div style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 0, height: 0, marginLeft: 4, borderTop: '9px solid transparent', borderBottom: '9px solid transparent', borderLeft: '15px solid rgba(255,255,255,0.7)' }} />
+                </div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  intro video / ambient loop
+                </div>
+                <div style={{ position: 'absolute', bottom: 10, right: 12, fontFamily: 'var(--hand)', fontSize: 13, color: 'rgba(255,255,255,0.22)', transform: 'rotate(-1deg)' }}>
+                  embed video ↗
+                </div>
+              </>
+            )}
           </div>
 
           {/* Quick nav cards */}
@@ -281,11 +303,18 @@ export default function HomePage() {
               <div style={{
                 width: 200, height: 220, background: 'var(--cream-dk)',
                 borderRadius: '10px 8px 11px 9px / 9px 11px 8px 10px',
-                border: '1.5px dashed var(--ink-muted)',
+                border: PORTRAIT_SRC ? '1.5px solid var(--cream-dkr)' : '1.5px dashed var(--ink-muted)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+                overflow: 'hidden',
               }}>
-                <div style={{ fontFamily: 'var(--serif)', fontSize: 64, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.3 }}>H</div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>portrait<br />photo here</div>
+                {PORTRAIT_SRC ? (
+                  <img src={PORTRAIT_SRC} alt="Hưng" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <>
+                    <div style={{ fontFamily: 'var(--serif)', fontSize: 64, fontWeight: 700, color: 'var(--ink-lt)', lineHeight: 1, opacity: 0.3 }}>H</div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>portrait<br />photo here</div>
+                  </>
+                )}
               </div>
             </div>
           </div>
