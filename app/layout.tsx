@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import PageLoader from "@/components/PageLoader";
 
-const GA_ID = "G-B5NL88M9F0";
+const GA_ID = "G-3G4695SB7Y";
 
 export const metadata: Metadata = {
   title: "Hưng's Garden",
