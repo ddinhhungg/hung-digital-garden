@@ -6,8 +6,15 @@ import BookSpine from '@/components/BookSpine';
 import { getAllPosts } from '@/lib/posts';
 import { hero, navCards, gardenMap, recentlyTended, projectShelf, about } from '@/content.config';
 
+const TAG_COLORS: Record<string, string> = {
+  project: '#3D5A3E',
+  note:    '#6B5A3A',
+  thought: '#4A4A5A',
+};
+
 export default function HomePage() {
-  const posts = getAllPosts().slice(0, 3);
+  const allPosts = getAllPosts();
+  const posts = allPosts.slice(0, 3);
 
   return (
     <>
@@ -236,17 +243,28 @@ export default function HomePage() {
         </div>
         <div className="reveal">
           <div className="shelf-row" style={{
-            display: 'flex', gap: 6, alignItems: 'flex-end', height: 200,
+            display: 'flex', gap: 6, alignItems: 'flex-end', height: 210,
             paddingBottom: 2, borderBottom: '3px solid var(--ink-lt)', position: 'relative',
           }}>
             <div style={{ position: 'absolute', bottom: -6, left: -4, right: -4, height: 4, background: 'var(--ink-lt)', borderRadius: '0 0 2px 2px' }} />
-            {projectShelf.books.map((book, i) => (
-              <BookSpine key={book.title} {...book} delay={i % 4 + 1} />
+            {allPosts.map((post, i) => (
+              <BookSpine
+                key={post.slug}
+                title={post.title}
+                tool={post.tag}
+                bg={TAG_COLORS[post.tag] ?? '#5A4A3A'}
+                w={46 + (i % 3) * 4}
+                h={130 + (post.readTime ?? 5) * 8}
+                delay={i % 4 + 1}
+                href={`/notes/${post.slug}`}
+              />
             ))}
-            <span style={{ fontFamily: 'var(--hand)', fontSize: 18, color: 'var(--ink-muted)', alignSelf: 'center', marginLeft: 10 }}>+ more</span>
+            {allPosts.length === 0 && (
+              <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-muted)', alignSelf: 'center' }}>bài viết sẽ xuất hiện ở đây...</span>
+            )}
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)', marginTop: 14, letterSpacing: '0.05em' }}>
-            ↑ hover a spine to see details · click to read
+            ↑ hover để xem tên · click để đọc bài — {allPosts.length} bài viết
           </div>
         </div>
       </section>
