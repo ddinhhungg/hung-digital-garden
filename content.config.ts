@@ -12,13 +12,13 @@ export const site = {
 export const hero = {
   // ── Phần trái (giới thiệu) ───────────────────────────────
   badge: "digital garden",           // badge nhỏ trên cùng
-  name: "Hưng",                      // tên hiển thị lớn
+  name: "Đình Hưng",                      // tên hiển thị lớn
   quote: [                           // câu quote (2 dòng)
     '"Thinking out loud —',
     'one slow idea at a time."',
   ],
   subtitle: "Ghi lại để hiểu — từng chút một.",  // chữ nhỏ dưới quote
-  ctaButton: "explore the garden →", // nút đỏ
+  ctaButton: "explore my garden →", // nút đỏ
   ctaSecondary: "or just read",      // link phụ bên cạnh nút
 
   // ── Phần phải (video + social) ───────────────────────────
@@ -108,12 +108,12 @@ export const projectShelf = {
   title: "Project Shelf",
   // Mỗi cuốn sách: title (tên dự án), tool (công nghệ dùng), bg (màu gáy sách)
   books: [
-    { title: "Project Alpha",    tool: "React",  bg: "#8B4A3A", w: 52, h: 178 },
-    { title: "Garden Exp.",      tool: "Python", bg: "#3D5A3E", w: 48, h: 152 },
-    { title: "Visual Study 01",  tool: "Figma",  bg: "#6B5A3A", w: 56, h: 186 },
-    { title: "— WIP —",          tool: "???",    bg: "#4A4A5A", w: 44, h: 132 },
-    { title: "Side Thing",       tool: "Swift",  bg: "#5A3A3A", w: 50, h: 162 },
-    { title: "Open Source",      tool: "Go",     bg: "#3A4A3A", w: 52, h: 170 },
+    { title: "Project Alpha",    tool: "D",  bg: "#8B4A3A", w: 52, h: 178 },
+    { title: "Garden Exp.",      tool: "Ư", bg: "#3D5A3E", w: 48, h: 152 },
+    { title: "Visual Study 01",  tool: "Ơ",  bg: "#6B5A3A", w: 56, h: 186 },
+    { title: "— WIP —",          tool: "N",    bg: "#4A4A5A", w: 44, h: 132 },
+    { title: "Side Thing",       tool: "G",  bg: "#5A3A3A", w: 50, h: 162 },
+    { title: "Open Source",      tool: "Đ",     bg: "#3A4A3A", w: 52, h: 170 },
   ],
 };
 
@@ -123,16 +123,19 @@ export const about = {
   title: "About Hưng",
   portraitSrc: "/portrait.jpg",   // ảnh chân dung (để trong public/)
   quote: [                        // câu quote bên lề đỏ (2 dòng)
-    '"Mình thích biến những thứ phức tạp thành đơn giản —',
+    '"Tôi thích biến những thứ phức tạp thành đơn giản —',
     'trong công việc, trong suy nghĩ, và trong cách sống."',
   ],
-  bio: `Mình là người làm vận hành và quản lý dự án, thiên về tối ưu quy trình và giải quyết vấn đề thực tế. Mình quen làm việc với nhiều phòng ban, thích biến các vấn đề phức tạp thành quy trình rõ ràng, dễ triển khai và đo lường được hiệu quả.
+  bio: `Là người làm vận hành và quản lý dự án, thiên về tối ưu quy trình và giải quyết vấn đề thực tế. Tôi quen làm việc với nhiều phòng ban, thích biến các vấn đề phức tạp thành quy trình rõ ràng, dễ triển khai và đo lường được hiệu quả.
 
-Ngoài công việc, mình thích những thứ trực quan, đơn giản nhưng có chiều sâu — từ cách viết, cách trình bày cho đến cách giải quyết vấn đề. Trang này là nơi mình ghi lại những thứ đang học, đang xây dựng, và đang suy nghĩ.`,
+Ngoài công việc, tôi thích những thứ trực quan, đơn giản nhưng tinh tế và có chiều sâu - từ cách viết, cách trình bày cho đến cách giải quyết vấn đề. Trang này là nơi tôi ghi lại những thứ đang học, đang xây dựng, và đang suy nghĩ.`,
   growthLog: [
     // Thêm/sửa dòng: { year: '...', text: '...' }
-    { year: "2024", text: "Bắt đầu xây dựng digital garden này", highlight: true },
-    { year: "2023", text: "Placeholder milestone",               highlight: false },
-    { year: "2022", text: "Placeholder milestone",               highlight: false },
+    { year: "04/2026", text: "Vẫn đang đi làm, rảnh rảnh không biết làm gì nên mới bắt đầu xây dựng digital garden này", highlight: true },
+    { year: "2025", text: "Tốt nghiệp - Chính thức làm tại CellphoneS với vị trí Tối ưu vận hành", highlight: false },    
+    { year: "2024", text: "Mất định hướng, stress, không biết làm gì",               highlight: false },
+    { year: "2022-2023", text: "Không có gì nổi bật",               highlight: false },
+    { year: "2021", text: "Đại học UEH - Kinh doanh thương mại",               highlight: false },
+    { year: "2018", text: "Trai chuyên hoá - Trường THPT chuyên Thăng Long - Đà Lạt",               highlight: false },
   ],
 };
