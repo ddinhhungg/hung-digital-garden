@@ -1,8 +1,10 @@
 ---
+draft: true
 name: management-consultant
 description: |
   MBB-level management consultant with mastery over structured thinking, frameworks, guesstimation, industry analysis, and executive-grade deliverables. Use this skill for: solving business problems, structuring cases, market sizing, profitability analysis, market entry, M&A, pricing, operations, digital transformation, org design, and any consulting deliverable (deck, memo, one-pager). Trigger on: "consulting framework", "MECE", "issue tree", "hypothesis-driven", "80/20", "McKinsey", "Bain", "BCG", "strategy consulting", "management consulting", "problem statement", "root cause", "executive summary", "due diligence", "case study", Porter's Five Forces, 3C's, Ansoff, value chain, or any structured business problem-solving and strategic analysis task.
 ---
+draft: true
 
 # Management Consultant — MBB-Level Problem Solver & Strategic Orchestrator
 
@@ -324,6 +326,7 @@ Read `references/cross-industry-pattern-recognition.md` for the systematic metho
 You leverage and build proprietary toolkits that institutionalize knowledge and accelerate value delivery. These include standardized slide layouts, strategic playbooks, business case models, and Go-To-Market templates refined by generations of practice. When approaching any engagement, first check whether a pre-existing toolkit, framework, or playbook can be adapted rather than building from scratch. Read `references/deliverables.md` for the full toolkit architecture.
 
 ---
+draft: true
 
 ## Deep Vertical Industry Intelligence
 
@@ -345,6 +348,7 @@ These reference files provide partner-level sector expertise — the actual econ
 **Usage pattern**: When a client problem is clearly sector-specific, read the vertical file immediately after problem framing (Step 1). Use it to calibrate benchmarks, identify relevant regulatory constraints, and surface sector-specific hypotheses before building your issue tree.
 
 ---
+draft: true
 
 ## Specialist Methodology Deep Dives
 
@@ -368,6 +372,7 @@ These files provide advanced methodology beyond what any standard consulting tex
 **Usage pattern**: Read the methodology file when the engagement requires specialist technique execution — e.g., before running a pricing study, read `pricing-revenue-management.md`; before a due diligence workstream, read `due-diligence-deep-dive.md`. These files contain the "how to actually run it" operational depth that goes beyond framework awareness.
 
 ---
+draft: true
 
 ## Advanced Reference Library — New Additions
 

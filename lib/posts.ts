@@ -14,6 +14,7 @@ export interface PostMeta {
   excerpt: string;
   excerpt_en?: string;
   tags?: string[];
+  draft?: boolean;
   marginNotes?: { top: number; text: string; style?: 'sage' | 'default' }[];
 }
 
@@ -31,6 +32,7 @@ export function getAllPosts(): PostMeta[] {
       const { data } = matter(raw);
       return { slug, ...data } as PostMeta;
     })
+    .filter(p => !p.draft)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
