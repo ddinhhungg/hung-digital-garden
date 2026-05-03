@@ -247,7 +247,7 @@ export default function HomePage() {
             paddingBottom: 2, borderBottom: '3px solid var(--ink-lt)', position: 'relative',
           }}>
             <div style={{ position: 'absolute', bottom: -6, left: -4, right: -4, height: 4, background: 'var(--ink-lt)', borderRadius: '0 0 2px 2px' }} />
-            {allPosts.map((post, i) => (
+            {allPosts.slice(0, 5).map((post, i) => (
               <BookSpine
                 key={post.slug}
                 title={post.title}
@@ -259,6 +259,17 @@ export default function HomePage() {
                 href={`/notes/${post.slug}`}
               />
             ))}
+            {allPosts.length > 5 && (
+              <div style={{
+                alignSelf: 'flex-end', paddingBottom: 8,
+                fontFamily: 'var(--hand)', fontSize: 13,
+                color: 'var(--ink-muted)', writingMode: 'vertical-rl',
+                transform: 'rotate(180deg)', letterSpacing: '0.04em',
+                paddingLeft: 4,
+              }}>
+                +{allPosts.length - 5} more
+              </div>
+            )}
             {allPosts.length === 0 && (
               <span style={{ fontFamily: 'var(--hand)', fontSize: 14, color: 'var(--ink-muted)', alignSelf: 'center' }}>bài viết sẽ xuất hiện ở đây...</span>
             )}

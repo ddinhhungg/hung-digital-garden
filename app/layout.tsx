@@ -8,6 +8,10 @@ const GA_ID = "G-3G4695SB7Y";
 export const metadata: Metadata = {
   title: "Hưng's Garden",
   description: "Thinking out loud — one slow idea at a time.",
+  icons: {
+    icon: '/favicon-logo.png',
+    apple: '/favicon-logo.png',
+  },
 };
 
 export const viewport: Viewport = {

@@ -51,7 +51,7 @@ export default function Nav({ showBack = false }: NavProps) {
         </TransitionLink>
       ) : (
         <>
-          <div className="nav-meta">☀ growing since 2024</div>
+          <div className="nav-meta">☀ growing since 2026</div>
           <button
             className={`nav-hamburger${menuOpen ? ' is-open' : ''}`}
             onClick={() => setMenuOpen(v => !v)}
