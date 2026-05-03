@@ -7,7 +7,7 @@ import { getAllPosts } from '@/lib/posts';
 export const metadata = { title: "Notes — Hưng's Garden" };
 
 export default function NotesPage() {
-  const posts = getAllPosts();
+  const posts = getAllPosts().filter(p => p.tag === 'note');
 
   return (
     <>

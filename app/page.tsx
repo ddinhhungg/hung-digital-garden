@@ -266,7 +266,7 @@ export default function HomePage() {
                 color: 'var(--ink-muted)', letterSpacing: '0.02em',
                 paddingLeft: 8, whiteSpace: 'nowrap',
               }}>
-                +{allPosts.length - 5} more
+                + more
               </div>
             )}
             {allPosts.length === 0 && (
