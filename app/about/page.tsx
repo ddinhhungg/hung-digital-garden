@@ -39,12 +39,10 @@ export default function AboutPage() {
               fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.9,
               color: 'var(--ink)', margin: '0 0 36px',
             }}>
-              Mình là Hưng — sinh ra ở Đà Lạt, lớn lên giữa sương mù và những con dốc,
-              rồi xuống Sài Gòn học và làm việc từ năm 2021. Đang là sinh viên Kinh doanh
-              thương mại tại Đại học Kinh tế TP.HCM, nhưng thật ra mình quan tâm đến
-              khá nhiều thứ nằm ngoài giáo trình. Thích ngồi một mình quan sát, nghĩ
-              chậm về những điều đang xảy ra xung quanh — và cái digital garden này là
-              chỗ mình ghi lại những suy nghĩ đó.
+              Mình là Hưng — sinh ra ở Lâm Đồng, lớn lên giữa sương mù và những con dốc, lên thành phố Đà Lạt học cấp 3
+              rồi xuống Sài Gòn học và làm việc từ năm 2021. Đã từng là sinh viên ngành Kinh doanh
+              thương mại tại Đại học Kinh tế TP.HCM, giờ thì đã ra trường và đi làm rùi. 
+              Thích ngồi một mình quan sát, nghĩ chậm về những điều đang xảy ra xung quanh — và cái digital garden này là chỗ mình ghi lại những suy nghĩ đó.
             </p>
 
             {/* Currently */}
@@ -59,10 +57,10 @@ export default function AboutPage() {
               </div>
               <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
-                  'Học về AI và chuyển đổi số — không chỉ công nghệ, mà cách nó thay đổi cách người ta làm việc',
-                  'Làm các dự án về marketing, thương mại điện tử và phân tích dữ liệu — vừa học vừa làm thật',
+                  'Tò mò với các công nghệ mới (AI, Automation,...) — không chỉ công nghệ, mà cách nó thay đổi cách người ta làm việc',
+                  'Làm các dự án về tối ưu, xây dựng quy trình, marketing, thương mại điện tử và phân tích dữ liệu',
                   'Viết — không để cho ai, chủ yếu để hiểu rõ hơn những gì mình đang nghĩ',
-                  'Thi thoảng đi đâu đó để nhớ ra rằng thế giới rộng hơn màn hình laptop',
+                  'Thi thoảng đi đâu đó để nhớ ra rằng thế giới rộng hơn màn hình laptop (Câu này AI nói bịa sến nhưng thấy cũng đúng đúng)',
                 ].map((item, i) => (
                   <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                     <span style={{
@@ -112,7 +110,7 @@ export default function AboutPage() {
               color: 'var(--ink-muted)', borderLeft: '3px solid var(--cream-dkr)',
               paddingLeft: 16, margin: 0, lineHeight: 1.8,
             }}>
-              Mình tin rằng sống chậm hơn một chút thường giúp nhìn thấy nhiều hơn.
+              Mình tin rằng sống chậm hơn một chút thường giúp nhìn thấy nhiều hơn (AI cũng bịa, vẫn thấy đúng mà nó hiểu mình hơn cả mình :)))).
             </p>
           </div>
 
@@ -166,7 +164,7 @@ export default function AboutPage() {
                 fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--ink-muted)',
                 lineHeight: 1.8, margin: 0,
               }}>
-                Nếu muốn trao đổi về AI, kinh doanh hay chỉ là nói chuyện — cứ nhắn thoải mái.
+                Nếu muốn trao đổi về kiến thức, kinh nghiệm, trải nghiệm hay chỉ là nói chuyện — cứ nhắn thoải mái.
               </p>
             </div>
 
