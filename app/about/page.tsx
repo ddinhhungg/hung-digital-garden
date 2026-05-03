@@ -209,7 +209,7 @@ export default function AboutPage() {
                 ['Cấp 3', 'THPT chuyên Thăng Long, Đà Lạt'],
                 ['Đại học', 'UEH — Kinh doanh thương mại'],
                 ['Hiện ở', 'TP. Hồ Chí Minh'],
-                ['Năm sinh', '2003 · Ma Kết ♑'],
+                ['Năm sinh', '2003'],
               ].map(([label, value]) => (
                 <div key={label} style={{ marginBottom: 12 }}>
                   <div style={{ fontFamily: 'var(--mono)', fontSize: 7, color: 'var(--ink-muted)', marginBottom: 2 }}>{label}</div>
