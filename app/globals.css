@@ -313,6 +313,14 @@ body::after {
   box-shadow: 0 8px 20px rgba(28,20,16,0.10);
 }
 
+/* About page grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 48px;
+  align-items: start;
+}
+
 /* Notes-listing row items */
 .notes-item {
   transition: translate 0.22s cubic-bezier(0.22,1,0.36,1),
@@ -734,7 +742,11 @@ footer.site-footer {
   /* About section: column */
   .about-content { flex-direction: column !important; gap: 24px !important; }
   .about-portrait { flex: none !important; width: 100% !important; align-items: center !important; }
-  .about-portrait > div { width: fit-content !important; } /* portrait image wrapper */
+  .about-portrait > div { width: fit-content !important; }
+
+  /* About page grid */
+  .about-grid { display: flex !important; flex-direction: column !important; gap: 32px !important; }
+  .about-sidebar { order: -1; }
 
   /* Sections */
   .section { padding: 32px 16px !important; }
