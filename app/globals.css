@@ -321,6 +321,13 @@ body::after {
   align-items: start;
 }
 
+/* Page content wrapper */
+.page-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 48px 80px;
+}
+
 /* Notes-listing row items */
 .notes-item {
   transition: translate 0.22s cubic-bezier(0.22,1,0.36,1),
@@ -747,6 +754,9 @@ footer.site-footer {
   /* About page grid */
   .about-grid { display: flex !important; flex-direction: column !important; gap: 32px !important; }
   .about-sidebar { order: -1; }
+
+  /* Page body padding */
+  .page-body { padding: 40px 20px 60px !important; }
 
   /* Sections */
   .section { padding: 32px 16px !important; }

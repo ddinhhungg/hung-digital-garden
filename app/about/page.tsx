@@ -19,7 +19,7 @@ export default function AboutPage() {
     <>
       <ScrollReveal />
       <Nav />
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '56px 48px 80px' }}>
+      <div className="page-body" style={{ maxWidth: 900, margin: '0 auto', padding: '56px 48px 80px' }}>
 
         {/* Header */}
         <div className="reveal" style={{ marginBottom: 48 }}>
@@ -233,7 +233,7 @@ export default function AboutPage() {
               </div>
               {[
                 ['Email', 'mailto:ddinhhungg@gmail.com', 'ddinhhungg@gmail.com'],
-                ['Facebook', 'https://facebook.com', 'facebook'],
+                ['Facebook', 'https://www.facebook.com/ddinhhungg', 'ddinhhungg'],
                 ['Instagram', 'https://instagram.com', 'instagram'],
                 ['LinkedIn', 'https://linkedin.com', 'linkedin'],
               ].map(([label, href, display]) => (
