@@ -135,6 +135,41 @@ export const journeyLocations: JourneyLocation[] = [
   // ── MUỐN ĐI ──────────────────────────────────────────────
 
   {
+    id: 'taxua',
+    name: 'Tà Xùa',
+    country: 'Việt Nam',
+    coordinates: [104.2833, 21.2167],
+    status: 'wishlist',
+  },
+  {
+    id: 'phuyen',
+    name: 'Phú Yên',
+    country: 'Việt Nam',
+    coordinates: [109.2897, 13.0882],
+    status: 'wishlist',
+  },
+  {
+    id: 'phuquy',
+    name: 'Đảo Phú Quý',
+    country: 'Việt Nam',
+    coordinates: [108.9333, 10.5167],
+    status: 'wishlist',
+  },
+  {
+    id: 'danang',
+    name: 'Đà Nẵng — Huế',
+    country: 'Việt Nam',
+    coordinates: [107.9000, 16.2500],
+    status: 'wishlist',
+  },
+  {
+    id: 'bali',
+    name: 'Bali',
+    country: 'Indonesia',
+    coordinates: [115.1889, -8.4095],
+    status: 'wishlist',
+  },
+  {
     id: 'tokyo',
     name: 'Tokyo',
     country: 'Nhật Bản',
