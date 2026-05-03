@@ -69,7 +69,7 @@ export default function PageLoader() {
           <div className="bk-shadow" />
         </div>
       </div>
-      <div className="loader-text">đợi mình lật trang khác nhé!</div>
+      <div className="loader-text">đợi mình lật trang mới nhé!</div>
     </div>
   );
 }

@@ -7,9 +7,9 @@ import { getAllPosts } from '@/lib/posts';
 import { hero, navCards, gardenMap, recentlyTended, projectShelf, about } from '@/content.config';
 
 const TAG_COLORS: Record<string, string> = {
-  project: '#3D5A3E',
-  note:    '#6B5A3A',
-  thought: '#4A4A5A',
+  project: '#4E8B5F',  // xanh lá tươi
+  note:    '#C0622B',  // cam đất ấm
+  thought: '#7B5EA7',  // tím lavender
 };
 
 export default function HomePage() {
