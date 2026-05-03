@@ -136,23 +136,6 @@ export const journeyLocations: JourneyLocation[] = [
     highlight: 'abroad',
   },
 
-  {
-    id: 'hoangsa',
-    name: 'Quần đảo Hoàng Sa',
-    country: 'Việt Nam',
-    coordinates: [112.0, 16.5],
-    status: 'visited',
-    highlight: 'island',
-  },
-  {
-    id: 'truongsa',
-    name: 'Quần đảo Trường Sa',
-    country: 'Việt Nam',
-    coordinates: [114.5, 9.5],
-    status: 'visited',
-    highlight: 'island',
-  },
-
   // ── MUỐN ĐI ──────────────────────────────────────────────
 
   {

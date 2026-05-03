@@ -142,6 +142,30 @@ export default function JourneyMap({ locations }: Props) {
             );
           })}
 
+          {/* Vietnamese territory islands — static, no interaction */}
+          {[
+            { id: 'hoangsa', name: 'Quần đảo Hoàng Sa', coordinates: [112.0, 16.5] as [number, number] },
+            { id: 'truongsa', name: 'Quần đảo Trường Sa', coordinates: [114.5, 9.5] as [number, number] },
+          ].map(island => (
+            <Marker key={island.id} coordinates={island.coordinates}>
+              <polygon
+                points="0,-4 4,0 0,4 -4,0"
+                fill="#DA251D"
+                stroke="#fff"
+                strokeWidth={0.8}
+                opacity={0.75}
+                style={{ pointerEvents: 'none' }}
+              />
+              <text
+                textAnchor="middle"
+                y={-8}
+                style={{ fontFamily: 'var(--mono, monospace)', fontSize: 7, fill: '#DA251D', pointerEvents: 'none', opacity: 0.8 }}
+              >
+                {island.name}
+              </text>
+            </Marker>
+          ))}
+
           {/* Wishlist markers */}
           {wishlist.map(loc => (
             <Marker
