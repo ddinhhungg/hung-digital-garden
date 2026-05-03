@@ -58,38 +58,62 @@ export default function JourneyMap({ locations }: Props) {
           </Geographies>
 
           {/* Visited markers */}
-          {visited.map(loc => (
-            <Marker
-              key={loc.id}
-              coordinates={loc.coordinates}
-              onClick={() => setSelected(selected?.id === loc.id ? null : loc)}
-              onMouseEnter={() => setHovered(loc.id)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <circle
-                r={hovered === loc.id || selected?.id === loc.id ? 8 : 6}
-                fill={selected?.id === loc.id ? '#8B1A1A' : '#C0392B'}
-                stroke="#fff"
-                strokeWidth={1.5}
-                style={{ cursor: 'pointer', transition: 'r 0.15s ease' }}
-              />
-              {(hovered === loc.id) && (
-                <text
-                  textAnchor="middle"
-                  y={-12}
-                  style={{
-                    fontFamily: 'var(--mono, monospace)',
-                    fontSize: 9,
-                    fill: '#3A3028',
-                    pointerEvents: 'none',
-                    background: 'white',
-                  }}
-                >
-                  {loc.name}
-                </text>
-              )}
-            </Marker>
-          ))}
+          {visited.map(loc => {
+            const isHovered = hovered === loc.id;
+            const isSelected = selected?.id === loc.id;
+            const isHome = loc.highlight === 'home';
+            const isAbroad = loc.highlight === 'abroad';
+
+            const baseR    = isHome ? 7 : isAbroad ? 6 : 5;
+            const activeR  = baseR + 2;
+            const fill     = isSelected
+              ? (isHome ? '#7A5C00' : isAbroad ? '#1A4A7A' : '#8B1A1A')
+              : (isHome ? '#C8963E' : isAbroad ? '#4A6FA5' : '#C0392B');
+            const textFill = isHome ? '#7A5C00' : isAbroad ? '#4A6FA5' : '#3A3028';
+
+            return (
+              <Marker
+                key={loc.id}
+                coordinates={loc.coordinates}
+                onClick={() => setSelected(isSelected ? null : loc)}
+                onMouseEnter={() => setHovered(loc.id)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {/* Outer glow ring for home/abroad */}
+                {(isHome || isAbroad) && (
+                  <circle
+                    r={isHovered || isSelected ? activeR + 3 : baseR + 3}
+                    fill="none"
+                    stroke={isHome ? '#C8963E' : '#4A6FA5'}
+                    strokeWidth={1}
+                    strokeOpacity={0.4}
+                    style={{ pointerEvents: 'none', transition: 'r 0.15s ease' }}
+                  />
+                )}
+                <circle
+                  r={isHovered || isSelected ? activeR : baseR}
+                  fill={fill}
+                  stroke="#fff"
+                  strokeWidth={isHome || isAbroad ? 2 : 1.5}
+                  style={{ cursor: 'pointer', transition: 'r 0.15s ease' }}
+                />
+                {isHovered && (
+                  <text
+                    textAnchor="middle"
+                    y={-(baseR + 8)}
+                    style={{
+                      fontFamily: 'var(--mono, monospace)',
+                      fontSize: 9,
+                      fill: textFill,
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {loc.name}
+                  </text>
+                )}
+              </Marker>
+            );
+          })}
 
           {/* Wishlist markers */}
           {wishlist.map(loc => (
@@ -129,17 +153,31 @@ export default function JourneyMap({ locations }: Props) {
         {/* Legend */}
         <div style={{
           position: 'absolute', bottom: 12, left: 14,
-          display: 'flex', gap: 16, alignItems: 'center',
+          display: 'flex', gap: 14, alignItems: 'center',
           background: 'rgba(237,232,223,0.88)', backdropFilter: 'blur(4px)',
           padding: '5px 10px', borderRadius: 4,
           fontFamily: 'var(--mono, monospace)', fontSize: 8, color: '#6B5A3A',
         }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="#C0392B" stroke="#fff" strokeWidth="1"/></svg>
+            <svg width="12" height="12">
+              <circle cx="6" cy="6" r="4" fill="none" stroke="#C8963E" strokeWidth="1" strokeOpacity="0.4"/>
+              <circle cx="6" cy="6" r="3" fill="#C8963E" stroke="#fff" strokeWidth="1"/>
+            </svg>
+            gắn bó
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <svg width="12" height="12">
+              <circle cx="6" cy="6" r="4" fill="none" stroke="#4A6FA5" strokeWidth="1" strokeOpacity="0.4"/>
+              <circle cx="6" cy="6" r="3" fill="#4A6FA5" stroke="#fff" strokeWidth="1"/>
+            </svg>
+            nước ngoài
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <svg width="10" height="10"><circle cx="5" cy="5" r="3.5" fill="#C0392B" stroke="#fff" strokeWidth="1"/></svg>
             đã đi ({visited.length})
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="none" stroke="#B0856A" strokeWidth="1.5" strokeDasharray="2 1"/></svg>
+            <svg width="10" height="10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="#B0856A" strokeWidth="1.5" strokeDasharray="2 1"/></svg>
             muốn đi ({wishlist.length})
           </span>
         </div>

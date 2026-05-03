@@ -10,6 +10,7 @@ export interface JourneyLocation {
   country: string;
   coordinates: [number, number]; // [longitude, latitude]
   status: 'visited' | 'wishlist';
+  highlight?: 'home' | 'abroad'; // home = gắn bó lâu dài, abroad = nước ngoài
   date?: string;
   note?: string;
   images?: string[];
@@ -25,6 +26,7 @@ export const journeyLocations: JourneyLocation[] = [
     country: 'Việt Nam',
     coordinates: [108.4583, 11.9465],
     status: 'visited',
+    highlight: 'home',
   },
   {
     id: 'hcm',
@@ -32,6 +34,7 @@ export const journeyLocations: JourneyLocation[] = [
     country: 'Việt Nam',
     coordinates: [106.6297, 10.8231],
     status: 'visited',
+    highlight: 'home',
   },
   {
     id: 'hanoi',
@@ -130,6 +133,7 @@ export const journeyLocations: JourneyLocation[] = [
     country: 'Thái Lan',
     coordinates: [100.5018, 13.7563],
     status: 'visited',
+    highlight: 'abroad',
   },
 
   // ── MUỐN ĐI ──────────────────────────────────────────────
