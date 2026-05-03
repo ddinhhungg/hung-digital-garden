@@ -34,7 +34,7 @@ export default function Nav({ showBack = false }: NavProps) {
         <TransitionLink href="/projects" className={pathname === '/projects' ? 'active' : ''}>projects</TransitionLink>
         <TransitionLink href="/journey" className={pathname === '/journey' ? 'active' : ''}>journey</TransitionLink>
         <TransitionLink href="/thoughts" className={pathname === '/thoughts' ? 'active' : ''}>thoughts</TransitionLink>
-        <TransitionLink href="/#about" className={pathname === '/about' ? 'active' : ''}>about</TransitionLink>
+        <TransitionLink href="/about" className={pathname === '/about' ? 'active' : ''}>about</TransitionLink>
       </div>
 
       {showBack ? (

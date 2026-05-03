@@ -261,11 +261,10 @@ export default function HomePage() {
             ))}
             {allPosts.length > 5 && (
               <div style={{
-                alignSelf: 'flex-end', paddingBottom: 8,
-                fontFamily: 'var(--hand)', fontSize: 13,
-                color: 'var(--ink-muted)', writingMode: 'vertical-rl',
-                transform: 'rotate(180deg)', letterSpacing: '0.04em',
-                paddingLeft: 4,
+                alignSelf: 'center',
+                fontFamily: 'var(--hand)', fontSize: 16,
+                color: 'var(--ink-muted)', letterSpacing: '0.02em',
+                paddingLeft: 8, whiteSpace: 'nowrap',
               }}>
                 +{allPosts.length - 5} more
               </div>
