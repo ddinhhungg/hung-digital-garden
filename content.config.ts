@@ -123,7 +123,7 @@ export const about = {
   title: "About Hưng",
   portraitSrc: "/portrait.jpg",   // ảnh chân dung (để trong public/)
   quote: [                        // câu quote bên lề đỏ (2 dòng)
-    '"Tôi thích biến những thứ phức tạp thành đơn giản —',
+    '"Thích biến những thứ phức tạp thành đơn giản —',
     'trong công việc, trong suy nghĩ, và trong cách sống."',
   ],
   bio: `Là người làm vận hành và quản lý dự án, thiên về tối ưu quy trình và giải quyết vấn đề thực tế. Tôi quen làm việc với nhiều phòng ban, thích biến các vấn đề phức tạp thành quy trình rõ ràng, dễ triển khai và đo lường được hiệu quả.
@@ -132,7 +132,7 @@ Ngoài công việc, tôi thích những thứ trực quan, đơn giản nhưng 
   growthLog: [
     // Thêm/sửa dòng: { year: '...', text: '...' }
     { year: "04/2026", text: "Vẫn đang đi làm, rảnh rảnh không biết làm gì nên mới bắt đầu xây dựng digital garden này", highlight: true },
-    { year: "2025", text: "Tốt nghiệp - Chính thức làm tại CellphoneS với vị trí Tối ưu vận hành", highlight: false },    
+    { year: "2025", text: "Tốt nghiệp - Có công việc chính thức với vị trí chuyên viên Tối ưu vận hành", highlight: false },    
     { year: "2024", text: "Mất định hướng, stress, không biết làm gì",               highlight: false },
     { year: "2022-2023", text: "Không có gì nổi bật",               highlight: false },
     { year: "2021", text: "Đại học UEH - Kinh doanh thương mại",               highlight: false },
