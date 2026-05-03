@@ -10,7 +10,7 @@ export interface JourneyLocation {
   country: string;
   coordinates: [number, number]; // [longitude, latitude]
   status: 'visited' | 'wishlist';
-  highlight?: 'home' | 'abroad'; // home = gắn bó lâu dài, abroad = nước ngoài
+  highlight?: 'home' | 'abroad' | 'island'; // home = gắn bó lâu dài, abroad = nước ngoài, island = hải đảo
   date?: string;
   note?: string;
   images?: string[];
@@ -134,6 +134,23 @@ export const journeyLocations: JourneyLocation[] = [
     coordinates: [100.5018, 13.7563],
     status: 'visited',
     highlight: 'abroad',
+  },
+
+  {
+    id: 'hoangsa',
+    name: 'Quần đảo Hoàng Sa',
+    country: 'Việt Nam',
+    coordinates: [112.0, 16.5],
+    status: 'visited',
+    highlight: 'island',
+  },
+  {
+    id: 'truongsa',
+    name: 'Quần đảo Trường Sa',
+    country: 'Việt Nam',
+    coordinates: [114.5, 9.5],
+    status: 'visited',
+    highlight: 'island',
   },
 
   // ── MUỐN ĐI ──────────────────────────────────────────────

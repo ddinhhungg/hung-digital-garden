@@ -61,8 +61,40 @@ export default function JourneyMap({ locations }: Props) {
           {visited.map(loc => {
             const isHovered = hovered === loc.id;
             const isSelected = selected?.id === loc.id;
-            const isHome = loc.highlight === 'home';
-            const isAbroad = loc.highlight === 'abroad';
+            const isHome    = loc.highlight === 'home';
+            const isAbroad  = loc.highlight === 'abroad';
+            const isIsland  = loc.highlight === 'island';
+
+            if (isIsland) {
+              const s = isHovered || isSelected ? 6 : 4;
+              return (
+                <Marker
+                  key={loc.id}
+                  coordinates={loc.coordinates}
+                  onClick={() => setSelected(isSelected ? null : loc)}
+                  onMouseEnter={() => setHovered(loc.id)}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {/* Kim cương nhỏ */}
+                  <polygon
+                    points={`0,${-s} ${s},0 0,${s} ${-s},0`}
+                    fill={isSelected ? '#8B1A1A' : '#DA251D'}
+                    stroke="#fff"
+                    strokeWidth={1}
+                    style={{ cursor: 'pointer', transition: 'all 0.15s ease' }}
+                  />
+                  {isHovered && (
+                    <text
+                      textAnchor="middle"
+                      y={-(s + 6)}
+                      style={{ fontFamily: 'var(--mono, monospace)', fontSize: 8, fill: '#DA251D', pointerEvents: 'none' }}
+                    >
+                      {loc.name}
+                    </text>
+                  )}
+                </Marker>
+              );
+            }
 
             const baseR    = isHome ? 7 : isAbroad ? 6 : 5;
             const activeR  = baseR + 2;
@@ -101,12 +133,7 @@ export default function JourneyMap({ locations }: Props) {
                   <text
                     textAnchor="middle"
                     y={-(baseR + 8)}
-                    style={{
-                      fontFamily: 'var(--mono, monospace)',
-                      fontSize: 9,
-                      fill: textFill,
-                      pointerEvents: 'none',
-                    }}
+                    style={{ fontFamily: 'var(--mono, monospace)', fontSize: 9, fill: textFill, pointerEvents: 'none' }}
                   >
                     {loc.name}
                   </text>
