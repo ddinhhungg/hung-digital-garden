@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#F7EDE0',
+  themeColor: '#F9F5EE',
 };
 
 export default function MoneyPage() {
