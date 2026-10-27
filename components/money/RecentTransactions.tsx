@@ -9,7 +9,7 @@ export default function RecentTransactions({ transactions, hidden, currentYear, 
   transactions: Transaction[]; hidden: boolean; currentYear: number; onAdd: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  return <section className={styles.section}><h2>Giao dịch gần đây</h2>
+  return <section className={styles.card}><div className={styles.cardHead}><h2>Giao dịch gần đây</h2></div>
     {!transactions.length ? <><MoneyState status="empty" title="Chưa có giao dịch" description="Ghi khoản thu hoặc chi đầu tiên khi anh sẵn sàng." /><button className={styles.textButton} onClick={onAdd}>Thêm giao dịch</button></> :
       <ul className={styles.list}>{transactions.slice(0, expanded ? 30 : 10).map(t => {
         const incoming = t.from === 'Ngoài', outgoing = t.to === 'Ngoài';

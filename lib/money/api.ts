@@ -57,6 +57,14 @@ async function call(action: 'summary' | 'add', payload?: unknown): Promise<unkno
   throw new MoneyError(code, body.message || 'Có lỗi xảy ra.', body.field ?? undefined);
 }
 
+// Tách "Tên (mô tả)" thành tên và mô tả khi Sheet chưa có cột Ghi chú.
+function splitName<T extends { name: string; note?: string | null }>(item: T): T {
+  const name = String(item.name ?? '');
+  if (item.note) return { ...item, name };
+  const m = name.match(/^(.*\S)\s*\(([^()]+)\)\s*$/);
+  return m ? { ...item, name: m[1], note: m[2] } : { ...item, name, note: null };
+}
+
 // Chấp nhận bản Apps Script cũ (chưa có phần dashboard) bằng giá trị mặc định rỗng.
 function normalize(raw: unknown): Summary {
   const s = raw as Partial<Summary> | null;
@@ -67,10 +75,11 @@ function normalize(raw: unknown): Summary {
   return {
     ...(s as Summary),
     month,
+    accounts: s.accounts.map(splitName),
     trend: s.trend ?? { netWorth: [], months: [] },
     upcoming: s.upcoming ?? [],
     portfolio: s.portfolio ?? null,
-    funds: s.funds ?? [],
+    funds: (s.funds ?? []).map(splitName),
     debts: s.debts ?? [],
     recent: s.recent ?? [],
   };

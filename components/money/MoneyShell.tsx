@@ -62,14 +62,9 @@ export default function MoneyShell({
         aria-labelledby={showNavigation ? `money-tab-${activeTab}` : undefined}
         tabIndex={showNavigation ? 0 : undefined}
       >{children}</div>
-      {showNavigation && <>
-        <div className={styles.actionRail}>
-          <button className={styles.addButton} onClick={onAdd} disabled={!onAdd} aria-label="Thêm giao dịch">
-            <MoneyIcon path="M12 4v16 M4 12h16" />
-          </button>
-        </div>
-        <nav className={styles.navigation} role="tablist" aria-label="Điều hướng tài chính">
-          {moneyTabs.map(t => <button
+      {showNavigation && <nav className={styles.navigation} aria-label="Điều hướng tài chính">
+        <div className={styles.tabList} role="tablist" aria-label="Các mục">
+          {moneyTabs.slice(0, 2).map(t => <button
             key={t.key}
             ref={node => { if (node) tabRefs.current[t.key] = node; }}
             id={`money-tab-${t.key}`}
@@ -82,8 +77,25 @@ export default function MoneyShell({
             onClick={() => changeTab(t.key)}
             onKeyDown={event => onKeyDown(event, t.key)}
           ><MoneyIcon path={t.path} /><span>{t.label}</span></button>)}
-        </nav>
-      </>}
+          <span className={styles.navGap} aria-hidden="true" />
+          {moneyTabs.slice(2).map(t => <button
+            key={t.key}
+            ref={node => { if (node) tabRefs.current[t.key] = node; }}
+            id={`money-tab-${t.key}`}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === t.key}
+            aria-controls="money-panel"
+            tabIndex={activeTab === t.key ? 0 : -1}
+            className={`${styles.tab} ${activeTab === t.key ? styles.activeTab : ''}`}
+            onClick={() => changeTab(t.key)}
+            onKeyDown={event => onKeyDown(event, t.key)}
+          ><MoneyIcon path={t.path} /><span>{t.label}</span></button>)}
+        </div>
+        <button className={styles.addButton} onClick={onAdd} disabled={!onAdd} aria-label="Thêm giao dịch">
+          <MoneyIcon path="M12 5v14 M5 12h14" />
+        </button>
+      </nav>}
     </section>
   );
 }

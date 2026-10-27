@@ -15,6 +15,8 @@ export interface Account {
   diff: number | null;
   reconciledAt: string | null;
   fundCode: string | null;
+  /** Mô tả phụ (ví dụ ngày đáo hạn, lãi suất). Có từ Apps Script 1.3. */
+  note?: string | null;
 }
 
 export interface Fund {
@@ -27,6 +29,7 @@ export interface Fund {
   progress: number | null;
   monthlyNeeded: number | null;
   account: string | null;
+  note?: string | null;
 }
 
 export interface Debt {

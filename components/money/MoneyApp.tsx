@@ -261,7 +261,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
       : data && <>
         {tab === 'overview' && <>
           <OverviewPanel totals={data.totals} month={data.month} trend={data.trend.netWorth} currentYear={clock.currentYear} hidden={hidden} onToggleHidden={() => setHidden(value => !value)} />
-          <UpcomingList items={data.upcoming} hidden={hidden} currentYear={clock.currentYear} />
+          <UpcomingList items={data.upcoming} accounts={data.accounts} hidden={hidden} today={clock.today} />
           <AccountList accounts={data.accounts} hidden={hidden} />
           <RecentTransactions transactions={data.recent} hidden={hidden} currentYear={clock.currentYear} onAdd={() => setDrawerOpen(true)} />
         </>}
