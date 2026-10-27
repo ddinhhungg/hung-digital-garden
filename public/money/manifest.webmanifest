@@ -1,0 +1,17 @@
+{
+  "name": "Money",
+  "short_name": "Money",
+  "description": "Sổ tay tài chính cá nhân",
+  "id": "/money/",
+  "start_url": "/money/",
+  "scope": "/money/",
+  "display": "standalone",
+  "background_color": "#F9F5EE",
+  "theme_color": "#F9F5EE",
+  "lang": "vi",
+  "icons": [
+    { "src": "/money/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/money/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/money/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
