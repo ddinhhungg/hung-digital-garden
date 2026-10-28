@@ -7,7 +7,8 @@ export function PrivateText({ text, hidden, label = 'Đã ẩn số liệu' }: {
     {hidden && <span className={styles.amountDots} aria-hidden="true">••••••</span>}
   </span>;
 }
-export const formatDay = (day: string, year: number) => {
+export const formatDay = (day: string | null | undefined, year: number) => {
+  if (!day) return '—';
   const [y, m, d] = day.slice(0, 10).split('-');
   return `${d}/${m}${Number(y) === year ? '' : '/' + y}`;
 };

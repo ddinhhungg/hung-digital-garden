@@ -81,7 +81,7 @@ function normalize(raw: unknown): Summary {
     portfolio: s.portfolio ?? null,
     funds: (s.funds ?? []).map(splitName),
     debts: s.debts ?? [],
-    recent: s.recent ?? [],
+    recent: (s.recent ?? []).map(t => ({ ...t, date: t.date ?? '' })),
   };
 }
 
