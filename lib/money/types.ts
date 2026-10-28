@@ -68,7 +68,11 @@ export interface CategorySpend {
 // v1.2
 export interface DailySpend { date: string; expense: number }
 export interface NetWorthPoint { date: string; netWorth: number; available: number; liquid: number }
-export interface MonthFlow { key: string; income: number; expense: number }
+export interface MonthFlow {
+  key: string; income: number; expense: number;
+  /** Chi theo danh mục của tháng đó. Có từ Apps Script 1.4. */
+  byCategory?: { category: string; spent: number }[];
+}
 export interface UpcomingItem {
   date: string;
   label: string;

@@ -1,13 +1,12 @@
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import styles from './money.module.css';
 
-export type MoneyTab = 'overview' | 'funds' | 'month' | 'debts' | 'charts';
-export const moneyTabs: { key: MoneyTab; label: string; path: string }[] = [
-  { key: 'overview', label: 'Tổng quan', path: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
-  { key: 'funds', label: 'Quỹ', path: 'M4 8h16v12H4z M3 4h18v4H3z M10 12h4' },
-  { key: 'month', label: 'Tháng này', path: 'M4 20V10h4v10 M10 20V4h4v16 M16 20v-7h4v7 M2 20h20' },
-  { key: 'debts', label: 'Công nợ', path: 'M4 7h15 M15 3l4 4-4 4 M20 17H5 M9 13l-4 4 4 4' },
-  { key: 'charts', label: 'Biểu đồ', path: 'M3 20h18 M4 16l5-6 5 3 6-9' },
+export type MoneyTab = 'overview' | 'charts' | 'month' | 'funds';
+export const moneyTabs: { key: MoneyTab; label: string; title: string; path: string }[] = [
+  { key: 'overview', label: 'Tổng quan', title: 'Tổng quan', path: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
+  { key: 'charts', label: 'Biểu đồ', title: 'Biểu đồ', path: 'M3 20h18 M4 16l5-6 5 3 6-9' },
+  { key: 'month', label: 'Tháng', title: 'Theo tháng', path: 'M4 20V10h4v10 M10 20V4h4v16 M16 20v-7h4v7 M2 20h20' },
+  { key: 'funds', label: 'Quỹ & nợ', title: 'Quỹ và công nợ', path: 'M4 8h16v12H4z M3 4h18v4H3z M10 12h4' },
 ];
 
 export function MoneyIcon({ path }: { path: string }) {

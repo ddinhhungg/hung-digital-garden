@@ -3,6 +3,7 @@ import type { Transaction } from '../../lib/money/types';
 import MoneyAmount from './MoneyAmount';
 import MoneyState from './MoneyState';
 import { formatDay } from './ChartPrimitives';
+import { categoryEmoji } from '../../lib/money/emoji';
 import styles from './money.module.css';
 
 export default function RecentTransactions({ transactions, hidden, currentYear, onAdd }: {
@@ -15,7 +16,7 @@ export default function RecentTransactions({ transactions, hidden, currentYear, 
         const incoming = t.from === 'Ngoài', outgoing = t.to === 'Ngoài';
         return <li key={t.id} className={`${styles.transaction} ${t.status === 'Void' ? styles.void : ''}`}>
           <span className={styles.txDate}>{formatDay(t.date, currentYear)}</span><div>
-            <div className={styles.row}><strong>{t.category || t.type}</strong><MoneyAmount value={t.amount} hidden={hidden} sign={incoming ? '+' : outgoing ? '−' : '↔'} direction={incoming ? 'in' : outgoing ? 'out' : 'neutral'} size="small" /></div>
+            <div className={styles.row}><strong><span className={styles.emoji} aria-hidden="true">{incoming ? '💰' : outgoing ? categoryEmoji(t.category) : '🔁'}</span>{t.category || t.type}</strong><MoneyAmount value={t.amount} hidden={hidden} sign={incoming ? '+' : outgoing ? '−' : '↔'} direction={incoming ? 'in' : outgoing ? 'out' : 'neutral'} size="small" /></div>
             <p>{[t.party, t.note].filter(Boolean).join(' · ')}</p><p className={styles.txMeta}>{t.from} → {t.to} · {t.source}{t.status !== 'OK' ? ` · ${t.status}` : ''}</p>
           </div>
         </li>;

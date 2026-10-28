@@ -1,5 +1,6 @@
 import type { Account, UpcomingItem } from '../../lib/money/types';
 import MoneyAmount from './MoneyAmount';
+import { itemEmoji } from '../../lib/money/emoji';
 import styles from './money.module.css';
 
 export default function UpcomingList({ items, accounts, hidden, today }: {
@@ -15,7 +16,7 @@ export default function UpcomingList({ items, accounts, hidden, today }: {
       const isToday = item.date === today;
       return <li key={`${item.date}-${i}`} className={styles.itemRow}>
         <span className={`${styles.dateBadge} ${isToday ? styles.dateToday : ''}`}><b>{d}</b><small>{isToday ? 'Hôm nay' : `Th${Number(m)}`}</small></span>
-        <span className={styles.itemText}><span>{item.label}</span>{accountName(item.account) && <small>{accountName(item.account)}</small>}</span>
+        <span className={styles.itemText}><span><span className={styles.emoji} aria-hidden="true">{itemEmoji(item.label)}</span>{item.label}</span>{accountName(item.account) && <small>{accountName(item.account)}</small>}</span>
         <MoneyAmount value={item.amount} hidden={hidden} sign={item.kind === 'in' ? '+' : '−'} direction={item.kind} size="small" />
       </li>;
     })}</ul>

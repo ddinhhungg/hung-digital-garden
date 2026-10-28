@@ -285,3 +285,21 @@ details.group[open] > summary > span:first-child::before { content: '▾ '; }
 .root .addButton { left: 50%; }
 .tabList .tab:nth-child(n+4) span { font-size: 8.5px; letter-spacing: -.2px; white-space: nowrap; }
 @media (max-width: 359px) { .tabList { grid-template-columns: repeat(2, calc((100% - 58px) / 4)) 58px repeat(3, calc((100% - 58px) / 6)); } .root .addButton { left: 50%; } }
+
+/* ===== v1.4: 4 tab đều nhau, bộ lọc tháng, emoji (Claude) ===== */
+.tabList, .root .tabList { grid-template-columns: repeat(2, minmax(0, 1fr)) 72px repeat(2, minmax(0, 1fr)); }
+.tabList .tab:nth-child(n+4) span { font-size: 9px; letter-spacing: 0; }
+.root .tab { font-size: 10px; }
+.root .tab svg { width: 22px; height: 22px; }
+@media (max-width: 359px) { .tabList, .root .tabList { grid-template-columns: repeat(2, minmax(0, 1fr)) 62px repeat(2, minmax(0, 1fr)); } }
+.emoji { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin-right: 8px; border-radius: 50%; background: var(--cream-dk); font-size: 14px; line-height: 1; vertical-align: middle; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; letter-spacing: 0; text-transform: none; }
+.groupHead .emoji { width: 22px; height: 22px; font-size: 12px; background: var(--paper); }
+.cardHead h2 .emoji, .fundCard h2 .emoji { width: 30px; height: 30px; font-size: 16px; }
+.itemText > span .emoji { width: 22px; height: 22px; font-size: 12px; margin-right: 6px; }
+.monthPicker { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 6px; margin-bottom: 14px; }
+.monthSelect select { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--cream-dkr); border-radius: 999px; background: var(--paper); font: 500 14px var(--serif); text-align: center; text-align-last: center; appearance: none; -webkit-appearance: none; }
+.monthPicker .iconButton { background: var(--paper); border: 1px solid var(--cream-dkr); }
+.leftRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; padding: 12px; border-radius: 10px; background: var(--cream); font-size: 13px; }
+.leftNote { margin-top: 8px !important; font-size: 11px; color: var(--sage); text-align: right; }
+.debtHeading, .subTitle { margin: 20px 0 10px !important; font-size: 18px !important; }
+.subTitle { margin-top: 28px !important; padding-top: 18px; border-top: 1px solid var(--cream-dkr); }

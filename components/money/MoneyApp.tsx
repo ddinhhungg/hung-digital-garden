@@ -239,7 +239,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
 
   const ready = gate === 'ready';
   const canAdd = ready && data !== null && loadState !== 'loading' && loadState !== 'error';
-  const title = moneyTabs.find(t => t.key === tab)!.label;
+  const title = moneyTabs.find(t => t.key === tab)!.title;
   let content;
   if (gate === 'pin') content = <PinScreen mode={pinMode} onSubmit={submitPin} />;
   else if (gate === 'token') content = <TokenScreen
@@ -265,10 +265,13 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
           <AccountList accounts={data.accounts} hidden={hidden} />
           <RecentTransactions transactions={data.recent} hidden={hidden} currentYear={clock.currentYear} onAdd={() => setDrawerOpen(true)} />
         </>}
-        {tab === 'funds' && <FundsPanel funds={data.funds} accounts={data.accounts} hidden={hidden} currentYear={clock.currentYear} />}
+        {tab === 'funds' && <>
+          <FundsPanel funds={data.funds} accounts={data.accounts} hidden={hidden} currentYear={clock.currentYear} />
+          <h2 className={styles.subTitle}>🤝 Công nợ</h2>
+          <DebtsPanel debts={data.debts} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />
+        </>}
         {tab === 'charts' && <ChartsPanel summary={data} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />}
-        {tab === 'month' && <MonthPanel month={data.month} hidden={hidden} />}
-        {tab === 'debts' && <DebtsPanel debts={data.debts} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />}
+        {tab === 'month' && <MonthPanel month={data.month} months={data.trend.months} hidden={hidden} />}
       </>}
   </>;
 
