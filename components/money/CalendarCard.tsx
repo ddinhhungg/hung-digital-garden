@@ -32,9 +32,6 @@ export default function CalendarCard({ items, hidden, today, onOpen }: CalendarC
     () => items.filter(i => i.date >= today && i.status === 'Chờ').slice(0, 3),
     [items, today],
   );
-  const monthItems = items.filter(i => i.date.startsWith(month) && i.status === 'Chờ' && i.certain && i.amount);
-  const sum = (kind: CalendarItem['kind']) => monthItems.filter(i => i.kind === kind).reduce((n, i) => n + (i.amount ?? 0), 0);
-
   const dayItems = selected ? byDate.get(selected) ?? [] : [];
   const noteItems = selected ? dayItems : upcoming;
   const notePrefix = (item: CalendarItem) => {
@@ -110,13 +107,6 @@ export default function CalendarCard({ items, hidden, today, onOpen }: CalendarC
       {selected && <button type="button" className={styles.postitAdd} onClick={() => onOpen({ month, date: selected, form: true })}>＋ ghi kế hoạch cho ngày này</button>}
     </div>
 
-    <div className={styles.calFoot}>
-      <span className={styles.calTotals}>
-        <small>{monthLabel(month)} chắc chắn</small>
-        <span>vào <MoneyAmount value={sum('in')} hidden={hidden} direction="in" size="small" /></span>
-        <span>ra <MoneyAmount value={sum('out')} hidden={hidden} direction="out" size="small" /></span>
-      </span>
-    </div>
     <div className={styles.calActions}>
       <button type="button" className={styles.calGhost} onClick={() => onOpen({ month, date: selected, form: true })}>＋ Thêm kế hoạch</button>
       <button type="button" className={styles.calMain} onClick={() => onOpen({ month, date: selected, form: false })}>Xem chi tiết lịch →</button>
