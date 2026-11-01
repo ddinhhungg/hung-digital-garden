@@ -80,6 +80,29 @@ export interface UpcomingItem {
   kind: 'in' | 'out';
   account: string | null;
 }
+export type PlanStatus = 'Chờ' | 'Đã xong' | 'Hoãn' | 'Huỷ';
+/** Một mục trên lịch: khoản cố định (source 'fixed') hoặc ghi chú kế hoạch (source 'plan'). Có từ Apps Script 1.6. */
+export interface CalendarItem {
+  id: string | null;
+  source: 'fixed' | 'plan';
+  date: string;
+  label: string;
+  amount: number | null;
+  kind: 'in' | 'out';
+  account: string | null;
+  certain: boolean;
+  status: PlanStatus;
+  note: string;
+}
+export interface NewPlan {
+  date: string;
+  label: string;
+  kind: 'Thu' | 'Chi';
+  amount: number | null;
+  account: string | null;
+  certain: boolean;
+  note?: string;
+}
 export interface Holding {
   code: string;
   type: string;
@@ -124,6 +147,7 @@ export interface Summary {
     months: MonthFlow[];
   };
   upcoming: UpcomingItem[];
+  calendar?: CalendarItem[];
   portfolio: Portfolio | null;
   accounts: Account[];
   funds: Fund[];
@@ -174,6 +198,8 @@ export class MoneyError extends Error {
 export interface MoneyClient {
   getSummary(): Promise<Summary>;
   addTransaction(t: NewTransaction): Promise<AddResult>;
+  addPlan(p: NewPlan): Promise<{ id: string }>;
+  setPlanStatus(id: string, status: PlanStatus, date?: string): Promise<{ id: string; status: PlanStatus }>;
   hasToken(): boolean;
   setToken(t: string): void;
   clearToken(): void;

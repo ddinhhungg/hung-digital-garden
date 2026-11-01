@@ -1,7 +1,7 @@
 import {
   MoneyError, type Account, type AddResult, type Debt, type Fund,
   type MoneyClient, type MoneyErrorCode, type MoneyLock,
-  type NewTransaction, type Summary, type Transaction, type TxType,
+  type NewPlan, type NewTransaction, type PlanStatus, type CalendarItem, type Summary, type Transaction, type TxType,
 } from './types';
 
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -187,6 +187,13 @@ function addDashboard(data: Summary, now: number) {
     { date: vnDay(now + 12 * dayMs), label: 'Thu nhập dự kiến', amount: 2000000, kind: 'in', account: null },
     { date: vnDay(now + 20 * dayMs), label: 'Thuê bao âm nhạc', amount: 59000, kind: 'out', account: 'MOMO' },
   ];
+  data.calendar = [
+    ...data.upcoming.map(u => ({ id: null, source: 'fixed' as const, ...u, certain: true, status: 'Chờ' as PlanStatus, note: '' })),
+    { id: 'MOCK-P1', source: 'plan', date: vnDay(now + 2 * dayMs), label: 'Đi chơi cuối tuần', amount: 1500000, kind: 'out', account: 'MOMO', certain: false, status: 'Chờ', note: 'Chưa chốt địa điểm' },
+    { id: 'MOCK-P2', source: 'plan', date: vnDay(now + 9 * dayMs), label: 'Thưởng KPI quý', amount: null, kind: 'in', account: 'VCB', certain: false, status: 'Chờ', note: 'Chưa biết số tiền' },
+    { id: 'MOCK-P3', source: 'plan', date: vnDay(now + 14 * dayMs), label: 'Mua tai nghe', amount: 2400000, kind: 'out', account: null, certain: true, status: 'Chờ', note: '' },
+    { id: 'MOCK-P4', source: 'plan', date: vnDay(now - 2 * dayMs), label: 'Gửi quà cho em', amount: 500000, kind: 'out', account: 'MOMO', certain: true, status: 'Đã xong', note: '' },
+  ] satisfies CalendarItem[];
 }
 function syncMonth(data: Summary) {
   const current = data.trend.months.find(m => m.key === data.month.key);
@@ -204,7 +211,7 @@ function applyScenario(data: Summary, scenario: MockScenario) {
   }
   if (scenario === 'empty') {
     data.accounts = []; data.funds = []; data.debts = []; data.recent = [];
-    data.upcoming = []; data.portfolio = null;
+    data.upcoming = []; data.calendar = []; data.portfolio = null;
     data.trend = { netWorth: [], months: [] };
     data.month = { key: data.month.key, income: 0, expense: 0, savingsRate: null, byCategory: [], daily: [] };
     data.meta.defaultAccount = '';
@@ -247,6 +254,25 @@ export function createMoneyMock({ now }: { now: () => number }): {
       syncLatest(data, vnDay(now()));
       cached = { data: copy(data), savedAt: data.asOf };
       return copy(data);
+    },
+    async addPlan(p: NewPlan) {
+      await delay();
+      if (!token) throw new MoneyError('UNAUTHORIZED', 'Chưa có token mẫu.');
+      if (!p.label.trim()) throw new MoneyError('VALIDATION', 'Nhập tên khoản.', 'label');
+      if (p.amount !== null && (!Number.isSafeInteger(p.amount) || p.amount <= 0)) throw new MoneyError('VALIDATION', 'Số tiền phải là số nguyên dương, hoặc để trống.', 'amount');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(p.date)) throw new MoneyError('VALIDATION', 'Chọn ngày hợp lệ.', 'date');
+      const id = `MOCK-P${++sequence}`;
+      (data.calendar ??= []).push({ id, source: 'plan', date: p.date, label: p.label.trim(), amount: p.amount, kind: p.kind === 'Thu' ? 'in' : 'out', account: p.account, certain: p.certain, status: 'Chờ', note: p.note ?? '' });
+      return { id };
+    },
+    async setPlanStatus(id: string, status: PlanStatus, date?: string) {
+      await delay();
+      if (!token) throw new MoneyError('UNAUTHORIZED', 'Chưa có token mẫu.');
+      const item = data.calendar?.find(c => c.id === id);
+      if (!item) throw new MoneyError('VALIDATION', 'Không tìm thấy khoản.', 'id');
+      item.status = status; if (date) item.date = date;
+      if (status === 'Huỷ') data.calendar = data.calendar!.filter(c => c.id !== id);
+      return { id, status };
     },
     async addTransaction(t: NewTransaction): Promise<AddResult> {
       await delay();

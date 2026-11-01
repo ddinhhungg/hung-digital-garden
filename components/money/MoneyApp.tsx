@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MoneyError, type MoneyClient, type MoneyErrorCode,
-  type MoneyLock, type NewTransaction, type Summary,
+  type MoneyLock, type NewTransaction, type NewPlan, type PlanStatus, type CalendarItem, type Summary,
 } from '../../lib/money/types';
 import MoneyShell, { MoneyIcon, moneyTabs, type MoneyTab } from './MoneyShell';
 import PinScreen from './PinScreen';
@@ -11,7 +11,8 @@ import TokenScreen from './TokenScreen';
 import MoneyState, { moneyErrorText } from './MoneyState';
 // These files are delivered in lượt 2; their connection is ready here.
 import ChartsPanel from './ChartsPanel';
-import UpcomingList from './UpcomingList';
+import CalendarCard from './CalendarCard';
+import CalendarSheet from './CalendarSheet';
 import OverviewPanel from './OverviewPanel';
 import AccountList from './AccountList';
 import RecentTransactions from './RecentTransactions';
@@ -52,6 +53,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [hidden, setHidden] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [calSheet, setCalSheet] = useState<{ month: string; date: string | null; form: boolean } | null>(null);
   const [clock, setClock] = useState<Clock | null>(null);
   const gateRef = useRef<Gate>('boot');
   const dataRef = useRef<Summary | null>(null);
@@ -237,6 +239,33 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
     }
   }
 
+  // Ghi hoặc đổi trạng thái kế hoạch: làm mới số liệu nhưng không để lỗi làm mới biến thành lỗi ghi.
+  async function guardedPlanWrite<T>(run: () => Promise<T>, waitRefresh: boolean): Promise<T> {
+    try {
+      const result = await run();
+      needsRefresh.current = true;
+      if (gateRef.current === 'ready') { if (waitRefresh) await readSummary(true); else void readSummary(true); }
+      return result;
+    } catch (value) {
+      const failure = asMoneyError(value);
+      if (failure.code === 'UNAUTHORIZED') {
+        setTokenError(moneyErrorText.UNAUTHORIZED);
+        if (gateRef.current === 'ready') enterToken();
+      }
+      throw failure;
+    }
+  }
+  const addPlan = (plan: NewPlan) => guardedPlanWrite(() => client.addPlan(plan), false);
+  const setPlanStatus = (id: string, status: PlanStatus, date?: string) => guardedPlanWrite(() => client.setPlanStatus(id, status, date), true).then(() => undefined);
+
+  // Nếu Apps Script chưa nâng cấp (chưa có calendar) thì dùng tạm danh sách "sắp tới" cũ.
+  const calendarItems: CalendarItem[] = data
+    ? (data.calendar && data.calendar.length ? data.calendar : data.upcoming.map(u => ({
+      id: null, source: 'fixed' as const, date: u.date, label: u.label, amount: u.amount, kind: u.kind,
+      account: u.account, certain: true, status: 'Chờ' as const, note: '',
+    })))
+    : [];
+
   const ready = gate === 'ready';
   const canAdd = ready && data !== null && loadState !== 'loading' && loadState !== 'error';
   const title = moneyTabs.find(t => t.key === tab)!.title;
@@ -261,7 +290,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
       : data && <>
         {tab === 'overview' && <>
           <OverviewPanel totals={data.totals} month={data.month} trend={data.trend.netWorth} currentYear={clock.currentYear} hidden={hidden} onToggleHidden={() => setHidden(value => !value)} />
-          <UpcomingList items={data.upcoming} accounts={data.accounts} hidden={hidden} today={clock.today} />
+          <CalendarCard items={calendarItems} hidden={hidden} today={clock.today} onOpen={setCalSheet} />
           <AccountList accounts={data.accounts} hidden={hidden} />
           <RecentTransactions transactions={data.recent} hidden={hidden} currentYear={clock.currentYear} onAdd={() => setDrawerOpen(true)} />
         </>}
@@ -282,6 +311,11 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
       onLock={ready ? lockScreen : undefined}
       onManageToken={ready ? () => { setTokenRequired(false); setTokenError(''); changeGate('token'); } : undefined}
     >{content}</MoneyShell>
+    {data && clock && ready && calSheet && <CalendarSheet
+      items={calendarItems} accounts={data.accounts} today={clock.today} hidden={hidden}
+      initialMonth={calSheet.month} initialDate={calSheet.date} startInForm={calSheet.form}
+      onAdd={addPlan} onSetStatus={setPlanStatus} onUnauthorized={enterToken} onClose={() => setCalSheet(null)}
+    />}
     {data && clock && <TransactionDrawer
       open={ready && drawerOpen}
       accounts={data.accounts} categories={data.meta.categories}

@@ -6,7 +6,9 @@ import {
   type AddResult,
   type MoneyClient,
   type MoneyErrorCode,
+  type NewPlan,
   type NewTransaction,
+  type PlanStatus,
   type Summary,
 } from './types';
 
@@ -17,7 +19,7 @@ type Envelope =
   | { ok: true; data: unknown }
   | { ok: false; code?: string; message?: string; field?: string | null };
 
-async function call(action: 'summary' | 'add', payload?: unknown): Promise<unknown> {
+async function call(action: 'summary' | 'add' | 'addPlan' | 'setPlanStatus', payload?: unknown): Promise<unknown> {
   const token = tokenStore.get();
   if (!token) throw new MoneyError('UNAUTHORIZED', 'Chưa có token.');
 
@@ -78,6 +80,7 @@ function normalize(raw: unknown): Summary {
     accounts: s.accounts.map(splitName),
     trend: s.trend ?? { netWorth: [], months: [] },
     upcoming: s.upcoming ?? [],
+    calendar: s.calendar ?? [],
     portfolio: s.portfolio ?? null,
     funds: (s.funds ?? []).map(splitName),
     debts: s.debts ?? [],
@@ -115,6 +118,16 @@ export function createMoneyClient(): MoneyClient {
       const data = normalize(await call('summary'));
       saveCache(data);
       return data;
+    },
+    async addPlan(p: NewPlan): Promise<{ id: string }> {
+      const result = (await call('addPlan', p)) as { id: string };
+      if (!result || typeof result.id !== 'string') throw new MoneyError('SERVER', 'Phản hồi không hợp lệ.');
+      return result;
+    },
+    async setPlanStatus(id: string, status: PlanStatus, date?: string) {
+      const result = (await call('setPlanStatus', { id, status, date })) as { id: string; status: PlanStatus };
+      if (!result || typeof result.id !== 'string') throw new MoneyError('SERVER', 'Phản hồi không hợp lệ.');
+      return result;
     },
     async addTransaction(t: NewTransaction): Promise<AddResult> {
       const result = (await call('add', t)) as AddResult;
