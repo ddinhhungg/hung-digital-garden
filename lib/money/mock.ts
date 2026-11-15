@@ -1,5 +1,6 @@
 import {
-  MoneyError, type Account, type AddResult, type Debt, type Fund,
+  MoneyError, type Account, type AddResult, type CompleteFixedInput, type CompletePlanInput, type CompleteResult,
+  type Debt, type DebtResult, type Fund, type NewDebt, type OffsetResult, type SettleDebtInput,
   type MoneyClient, type MoneyErrorCode, type MoneyLock,
   type NewPlan, type NewTransaction, type PlanStatus, type CalendarItem, type Summary, type Transaction, type TxType,
 } from './types';
@@ -46,6 +47,7 @@ function seed(now: number): Summary {
     { code: 'D02', kind: 'payable', party: 'Cửa hàng Nội thất Mộc', principal: 10_000_000, paid: 3_000_000, remaining: 7_000_000, due: day(4), status: 'open', note: '' },
     { code: 'D03', kind: 'receivable', party: 'Khánh Linh', principal: 10_000_000, paid: 1_600_000, remaining: 8_400_000, due: null, status: 'open', note: 'Chưa hẹn ngày hoàn lại.' },
     { code: 'D04', kind: 'receivable', party: 'Nhóm du lịch cuối tuần', principal: 3_000_000, paid: 0, remaining: 3_000_000, due: day(-60), status: 'risky', note: 'Dữ liệu mẫu để thử trạng thái rủi ro cao.' },
+    { code: 'D06', kind: 'payable', party: 'Khánh Linh', principal: 150_000, paid: 0, remaining: 150_000, due: null, status: 'open', note: 'Khánh Linh trả hộ tiền cà phê.' },
     { code: 'D05', kind: 'payable', party: 'Khoản đã tất toán', principal: 1_000_000, paid: 1_000_000, remaining: 0, due: day(-10), status: 'closed', note: '' },
   ];
   const categories: Summary['meta']['categories'] = [
@@ -110,7 +112,7 @@ function seed(now: number): Summary {
     },
     trend: { netWorth: [], months: [] }, upcoming: [], portfolio: null,
     accounts, funds, debts, recent,
-    meta: { txTypes: ['Thu', 'Chi', 'Chuyển', 'Vay', 'Cho vay', 'Trả nợ', 'Thu nợ', 'Điều chỉnh'], categories, defaultAccount: 'MOMO' },
+    meta: { txTypes: ['Thu', 'Chi', 'Chuyển', 'Vay', 'Cho vay', 'Trả nợ', 'Thu nợ', 'Điều chỉnh'], categories, defaultAccount: 'MOMO', api: 2 },
   };
   updateMockTotals(summary, day(0));
   addDashboard(summary, now);
@@ -188,11 +190,13 @@ function addDashboard(data: Summary, now: number) {
     { date: vnDay(now + 20 * dayMs), label: 'Thuê bao âm nhạc', amount: 59000, kind: 'out', account: 'MOMO' },
   ];
   data.calendar = [
-    ...data.upcoming.map(u => ({ id: null, source: 'fixed' as const, ...u, certain: true, status: 'Chờ' as PlanStatus, note: '' })),
+    ...data.upcoming.map(u => ({ id: null, source: 'fixed' as const, ...u, category: u.kind === 'in' ? 'Lương' : 'Nhà ở', txId: null, certain: true, status: 'Chờ' as PlanStatus, note: '' })),
+    { id: null, source: 'fixed', date: vnDay(now - 2 * dayMs), label: 'Gửi xe tháng', amount: 200000, kind: 'out', account: null, category: 'Di chuyển', txId: null, certain: true, status: 'Chờ', note: '' },
+    { id: 'MOCK-P5', source: 'plan', date: vnDay(now + 3 * dayMs), label: 'Trích quỹ tiết kiệm', amount: 500000, kind: 'move', account: 'VCB', to: 'POCKET3', category: null, txId: null, certain: true, status: 'Chờ', note: '' },
     { id: 'MOCK-P1', source: 'plan', date: vnDay(now + 2 * dayMs), label: 'Đi chơi cuối tuần', amount: 1500000, kind: 'out', account: 'MOMO', certain: false, status: 'Chờ', note: 'Chưa chốt địa điểm' },
     { id: 'MOCK-P2', source: 'plan', date: vnDay(now + 9 * dayMs), label: 'Thưởng KPI quý', amount: null, kind: 'in', account: 'VCB', certain: false, status: 'Chờ', note: 'Chưa biết số tiền' },
     { id: 'MOCK-P3', source: 'plan', date: vnDay(now + 14 * dayMs), label: 'Mua tai nghe', amount: 2400000, kind: 'out', account: null, certain: true, status: 'Chờ', note: '' },
-    { id: 'MOCK-P4', source: 'plan', date: vnDay(now - 2 * dayMs), label: 'Gửi quà cho em', amount: 500000, kind: 'out', account: 'MOMO', certain: true, status: 'Đã xong', note: '' },
+    { id: 'MOCK-P4', source: 'plan', date: vnDay(now - 2 * dayMs), label: 'Gửi quà cho em', amount: 500000, kind: 'out', account: 'MOMO', certain: true, status: 'Đã xong', txId: 'MOCK-OLD', note: '' },
   ] satisfies CalendarItem[];
 }
 function syncMonth(data: Summary) {
@@ -237,6 +241,33 @@ export function createMoneyMock({ now }: { now: () => number }): {
   let readError: MoneyErrorCode | null = null;
   let submitError: { code: MoneyErrorCode; field?: string } | null = null;
 
+  const guard = () => { if (!token) throw new MoneyError('UNAUTHORIZED', 'Chưa có token mẫu.'); };
+  const balancesOf = (codes: string[]) => Object.fromEntries(data.accounts.filter(a => codes.includes(a.code)).map(a => [a.code, a.balance]));
+  const moveMoney = (code: string, delta: number) => {
+    const account = data.accounts.find(a => a.code === code);
+    if (account) account.balance += delta;
+    updateMockTotals(data, vnDay(now()));
+  };
+  const newDebt = (kind: Debt['kind'], party: string, amount: number, due: string | null, note: string) => {
+    const code = `D${String(data.debts.length + 1).padStart(2, '0')}`;
+    data.debts.push({ code, kind, party, principal: amount, paid: 0, remaining: amount, due, status: 'open', note });
+    return code;
+  };
+  // Ghi một dòng giao dịch mẫu cho thu / chi / chuyển và cập nhật số dư.
+  const writeLedger = (kind: 'in' | 'out' | 'move', amount: number, account: string, to: string, category: string, date: string, note: string, party: string, field: string) => {
+    if (!Number.isSafeInteger(amount) || amount <= 0) throw new MoneyError('VALIDATION', 'Nhập số tiền để ghi sổ.', 'amount');
+    if (!data.accounts.some(a => a.code === account)) throw new MoneyError('VALIDATION', 'Chọn tài khoản.', field);
+    if (kind === 'move' && (!data.accounts.some(a => a.code === to) || to === account)) throw new MoneyError('VALIDATION', 'Chọn tài khoản đến.', 'to');
+    const type = kind === 'in' ? 'Thu' : kind === 'out' ? 'Chi' : 'Chuyển';
+    if (kind !== 'move' && !data.meta.categories.some(c => c.type === type && c.name === category)) throw new MoneyError('VALIDATION', 'Danh mục không hợp lệ.', 'category');
+    moveMoney(account, kind === 'in' ? amount : -amount);
+    if (kind === 'move') moveMoney(to, amount);
+    const id = `MOCK-${++sequence}`;
+    data.recent.unshift({ id, date, type, amount, from: kind === 'in' ? 'Ngoài' : account, to: kind === 'out' ? 'Ngoài' : kind === 'in' ? account : to, category, subcategory: '', party, note, source: 'App', status: 'OK' });
+    data.recent = data.recent.slice(0, 30);
+    return id;
+  };
+
   const client: MoneyClient = {
     hasToken: () => token.length > 0,
     setToken: value => { token = value; },
@@ -262,7 +293,7 @@ export function createMoneyMock({ now }: { now: () => number }): {
       if (p.amount !== null && (!Number.isSafeInteger(p.amount) || p.amount <= 0)) throw new MoneyError('VALIDATION', 'Số tiền phải là số nguyên dương, hoặc để trống.', 'amount');
       if (!/^\d{4}-\d{2}-\d{2}$/.test(p.date)) throw new MoneyError('VALIDATION', 'Chọn ngày hợp lệ.', 'date');
       const id = `MOCK-P${++sequence}`;
-      (data.calendar ??= []).push({ id, source: 'plan', date: p.date, label: p.label.trim(), amount: p.amount, kind: p.kind === 'Thu' ? 'in' : 'out', account: p.account, certain: p.certain, status: 'Chờ', note: p.note ?? '' });
+      (data.calendar ??= []).push({ id, source: 'plan', date: p.date, label: p.label.trim(), amount: p.amount, kind: p.kind === 'Thu' ? 'in' : p.kind === 'Chuyển' ? 'move' : 'out', account: p.account, to: p.to ?? null, category: null, txId: null, certain: p.certain, status: 'Chờ', note: p.note ?? '' });
       return { id };
     },
     async setPlanStatus(id: string, status: PlanStatus, date?: string) {
@@ -273,6 +304,69 @@ export function createMoneyMock({ now }: { now: () => number }): {
       item.status = status; if (date) item.date = date;
       if (status === 'Huỷ') data.calendar = data.calendar!.filter(c => c.id !== id);
       return { id, status };
+    },
+    async completePlan(input: CompletePlanInput): Promise<CompleteResult> {
+      await delay();
+      guard();
+      const item = data.calendar?.find(c => c.id === input.id && c.source === 'plan');
+      if (!item) throw new MoneyError('VALIDATION', 'Không tìm thấy khoản.', 'id');
+      if (item.status === 'Đã xong') throw new MoneyError('VALIDATION', 'Khoản này đã xong rồi, không ghi lại lần nữa.', 'id');
+      if (!input.record) { item.status = 'Đã xong'; item.txId = null; return { txId: null, balances: {} }; }
+      const amount = input.amount ?? item.amount ?? 0;
+      const account = input.account ?? item.account ?? '';
+      const to = input.to ?? item.to ?? '';
+      const txId = writeLedger(item.kind, amount, account, to, input.category ?? '', input.date ?? vnDay(now()), input.note || item.label, '', 'account');
+      item.status = 'Đã xong'; item.txId = txId; if (item.amount === null) item.amount = amount;
+      return { txId, balances: balancesOf(item.kind === 'in' ? [account] : item.kind === 'out' ? [account] : [account, to]) };
+    },
+    async completeFixed(input: CompleteFixedInput): Promise<CompleteResult> {
+      await delay();
+      guard();
+      const item = data.calendar?.find(c => c.source === 'fixed' && c.label === input.label && c.date === input.date);
+      if (!item) throw new MoneyError('VALIDATION', 'Không tìm thấy khoản cố định này vào ngày đó.', 'label');
+      if (item.status === 'Đã xong') throw new MoneyError('VALIDATION', 'Khoản này đã xử lý rồi.', 'label');
+      if (!input.record) { item.status = 'Đã xong'; item.txId = null; return { txId: null, balances: {} }; }
+      const account = input.account ?? item.account ?? '';
+      const txId = writeLedger(item.kind, input.amount ?? item.amount ?? 0, account, '', input.category ?? item.category ?? '', input.txDate ?? vnDay(now()), input.note || item.label, '', 'account');
+      item.status = 'Đã xong'; item.txId = txId;
+      data.upcoming = data.upcoming.filter(u => !(u.label === item.label && u.date === item.date));
+      return { txId, balances: balancesOf([account]) };
+    },
+    async addDebt(input: NewDebt): Promise<DebtResult> {
+      await delay();
+      guard();
+      if (!input.party.trim()) throw new MoneyError('VALIDATION', 'Nhập tên người từ 1 đến 80 ký tự.', 'party');
+      if (!Number.isSafeInteger(input.amount) || input.amount <= 0) throw new MoneyError('VALIDATION', 'Số tiền phải là số nguyên dương.', 'amount');
+      if (!data.accounts.some(a => a.code === input.account)) throw new MoneyError('VALIDATION', 'Chọn tài khoản.', 'account');
+      const lend = input.direction === 'lend';
+      const code = newDebt(lend ? 'receivable' : 'payable', input.party.trim(), input.amount, input.due ?? null, input.note ?? '');
+      moveMoney(input.account, lend ? -input.amount : input.amount);
+      return { code, balances: balancesOf([input.account]) };
+    },
+    async settleDebt(input: SettleDebtInput): Promise<DebtResult> {
+      await delay();
+      guard();
+      const debt = data.debts.find(d => d.code === input.code);
+      if (!debt) throw new MoneyError('VALIDATION', 'Không tìm thấy khoản nợ.', 'code');
+      if (debt.status === 'closed' || debt.remaining <= 0) throw new MoneyError('VALIDATION', 'Khoản nợ này đã đóng rồi.', 'code');
+      if (!Number.isSafeInteger(input.amount) || input.amount <= 0) throw new MoneyError('VALIDATION', 'Số tiền phải là số nguyên dương.', 'amount');
+      if (input.amount > debt.remaining) throw new MoneyError('VALIDATION', `Số tiền vượt phần còn lại (${debt.remaining.toLocaleString('vi-VN')}đ).`, 'amount');
+      if (!data.accounts.some(a => a.code === input.account)) throw new MoneyError('VALIDATION', 'Chọn tài khoản.', 'account');
+      debt.paid += input.amount; debt.remaining -= input.amount;
+      if (debt.remaining === 0) debt.status = 'closed';
+      moveMoney(input.account, debt.kind === 'receivable' ? input.amount : -input.amount);
+      return { remaining: debt.remaining, closed: debt.remaining === 0, balances: balancesOf([input.account]) };
+    },
+    async offsetDebts(receivable: string, payable: string): Promise<OffsetResult> {
+      await delay();
+      guard();
+      const a = data.debts.find(d => d.code === receivable), b = data.debts.find(d => d.code === payable);
+      if (!a || !b || a.kind !== 'receivable' || b.kind !== 'payable') throw new MoneyError('VALIDATION', 'Cần một khoản phải thu và một khoản phải trả.', 'receivable');
+      if (a.party.trim().toLowerCase() !== b.party.trim().toLowerCase()) throw new MoneyError('VALIDATION', 'Hai khoản nợ khác người, không bù trừ được.', 'receivable');
+      const amount = Math.min(a.remaining, b.remaining);
+      const closed: string[] = [];
+      [a, b].forEach(d => { d.paid += amount; d.remaining -= amount; if (d.remaining === 0) { d.status = 'closed'; closed.push(d.code); } });
+      return { amount, closed };
     },
     async addTransaction(t: NewTransaction): Promise<AddResult> {
       await delay();
@@ -291,8 +385,18 @@ export function createMoneyMock({ now }: { now: () => number }): {
       if (t.type !== 'Chuyển' && !data.meta.categories.some(c => c.type === t.type && c.name === t.category)) throw new MoneyError('VALIDATION', 'Chọn danh mục phù hợp.', 'category');
       const affected = data.accounts.filter(a => a.code === t.from || a.code === t.to);
       if (affected.some(a => !Number.isSafeInteger(a.balance + (a.code === t.to ? t.amount : -t.amount)))) throw new MoneyError('VALIDATION', 'Số tiền quá lớn.', 'amount');
+      let split: NonNullable<NewTransaction['split']> | null = null;
+      if (t.split) {
+        if (t.type !== 'Chi') throw new MoneyError('VALIDATION', 'Chỉ chia tiền được với khoản chi.', 'split');
+        if (!t.split.party.trim()) throw new MoneyError('VALIDATION', 'Nhập tên người nợ phần của anh (tối đa 80 ký tự).', 'splitParty');
+        if (!Number.isSafeInteger(t.split.amount) || t.split.amount <= 0) throw new MoneyError('VALIDATION', 'Phần người kia nợ phải là số nguyên dương.', 'splitAmount');
+        if (t.split.amount >= t.amount) throw new MoneyError('VALIDATION', 'Phần người kia phải nhỏ hơn tổng số tiền.', 'splitAmount');
+        split = t.split;
+      }
       const balances: Record<string, number> = {};
       affected.forEach(a => { a.balance += a.code === t.to ? t.amount : -t.amount; balances[a.code] = a.balance; });
+      const debtCode = split ? newDebt('receivable', split.party.trim(), split.amount, split.due ?? null, `Phần của ${split.party.trim()}`) : undefined;
+      if (split) t = { ...t, amount: t.amount - split.amount };
       const id = `MOCK-${++sequence}`;
       data.recent.push({
         id, date: t.date, type: t.type, amount: t.amount, from: t.from, to: t.to,
@@ -320,7 +424,7 @@ export function createMoneyMock({ now }: { now: () => number }): {
       updateMockTotals(data, vnDay(now()));
       syncMonth(data); syncLatest(data, vnDay(now()));
       data.asOf = new Date(now()).toISOString();
-      return { id, balances };
+      return { id, balances, debtCode };
     },
   };
   const lock: MoneyLock = {

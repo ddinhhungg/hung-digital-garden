@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MoneyError, type Account, type AddResult, type NewTransaction, type Summary } from '../../lib/money/types';
+import AmountField from './AmountField';
 import MoneyAmount from './MoneyAmount';
 import { moneyErrorText } from './MoneyState';
 import styles from './money.module.css';
@@ -7,21 +8,24 @@ import styles from './money.module.css';
 export interface TransactionDrawerProps {
   open: boolean; accounts: Account[]; categories: Summary['meta']['categories'];
   defaultAccount: string; today: string; hidden: boolean;
+  /** Mức của Apps Script. Từ 2 trở lên có công tắc chia tiền với người khác. */
+  apiLevel?: number;
   onSubmit: (t: NewTransaction) => Promise<AddResult>;
   onClose: () => void; onUnauthorized: () => void;
 }
 const normalize = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase();
 
-export default function TransactionDrawer({ open, accounts, categories, defaultAccount, today, hidden, onSubmit, onClose, onUnauthorized }: TransactionDrawerProps) {
+export default function TransactionDrawer({ open, accounts, categories, defaultAccount, today, hidden, apiLevel = 1, onSubmit, onClose, onUnauthorized }: TransactionDrawerProps) {
   const fresh = (): NewTransaction => ({ date: today, type: 'Chi', amount: 0, from: defaultAccount, to: 'Ngoài', category: '', note: '' });
   const [draft, setDraft] = useState<NewTransaction>(fresh);
   const [dirty, setDirty] = useState(false), [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<AddResult | null>(null);
   const [hint, setHint] = useState(''), [manualCategory, setManualCategory] = useState(false);
+  const [split, setSplit] = useState({ on: false, party: '', amount: 0 });
   const dialogRef = useRef<HTMLDivElement>(null), pending = useRef(false);
   const closeRef = useRef(() => {});
-  const clear = () => { setDraft(fresh()); setDirty(false); setErrors({}); setResult(null); setHint(''); setManualCategory(false); };
+  const clear = () => { setDraft(fresh()); setDirty(false); setErrors({}); setResult(null); setHint(''); setManualCategory(false); setSplit({ on: false, party: '', amount: 0 }); };
   const close = () => { if (pending.current) return; clear(); onClose(); };
   useEffect(() => { closeRef.current = close; });
   useEffect(() => { if (!dirty && !pending.current && !result) setDraft({ date: today, type: 'Chi', amount: 0, from: defaultAccount, to: 'Ngoài', category: '', note: '' }); }, [today, defaultAccount, dirty, result]);
@@ -57,7 +61,7 @@ export default function TransactionDrawer({ open, accounts, categories, defaultA
   function changeType(type: NewTransaction['type']) {
     const account = draft.type === 'Thu' ? draft.to : draft.from;
     patch({ type, from: type === 'Thu' ? 'Ngoài' : account, to: type === 'Thu' ? account : type === 'Chi' ? 'Ngoài' : '', category: '' });
-    setErrors({}); setHint(''); setManualCategory(false);
+    setErrors({}); setHint(''); setManualCategory(false); setSplit({ on: false, party: '', amount: 0 });
   }
   function noteChanged(note: string) {
     const match = categories.find(c => c.type === draft.type && c.hints.some(h => normalize(note).includes(normalize(h))));
@@ -76,17 +80,24 @@ export default function TransactionDrawer({ open, accounts, categories, defaultA
     if (draft.type === 'Chuyển' && draft.from === draft.to) next.to = 'Hai tài khoản phải khác nhau.';
     if (draft.type !== 'Chuyển' && !categories.some(c => c.type === draft.type && c.name === draft.category)) next.category = 'Chọn danh mục phù hợp.';
     if (!/^\d{4}-\d{2}-\d{2}$/.test(draft.date) || !Number.isFinite(Date.parse(`${draft.date}T00:00:00Z`)) || new Date(`${draft.date}T00:00:00Z`).toISOString().slice(0, 10) !== draft.date) next.date = 'Chọn ngày hợp lệ.';
+    const splitting = draft.type === 'Chi' && apiLevel >= 2 && split.on;
+    if (splitting) {
+      if (!split.party.trim() || split.party.trim().length > 80) next.splitParty = 'Nhập tên người nợ phần của anh.';
+      if (!Number.isSafeInteger(split.amount) || split.amount <= 0) next.splitAmount = 'Nhập số tiền họ nợ.';
+      else if (split.amount >= draft.amount) next.splitAmount = 'Phần của họ phải nhỏ hơn tổng số tiền.';
+    }
     if (Object.keys(next).length) { setErrors(next); return; }
     pending.current = true; setSending(true); setErrors({});
     try {
       const transaction: NewTransaction = { date: draft.date, type: draft.type, amount: draft.amount, from: draft.from, to: draft.to, note: draft.note ?? '' };
       if (draft.type !== 'Chuyển') transaction.category = draft.category;
+      if (splitting) transaction.split = { party: split.party.trim(), amount: split.amount };
       setResult(await onSubmit(transaction));
     } catch (value) {
       const error = value as MoneyError;
       const message = error.code === 'VALIDATION' ? error.message : moneyErrorText[error.code] ?? moneyErrorText.SERVER;
       const field = draft.type === 'Thu' && error.field === 'from' ? 'to' : draft.type === 'Chi' && error.field === 'to' ? 'from' : error.field;
-      setErrors({ [field && ['amount', 'from', 'to', 'category', 'note', 'date', 'type'].includes(field) ? field : 'general']: message });
+      setErrors({ [field && ['amount', 'from', 'to', 'category', 'note', 'date', 'type', 'splitParty', 'splitAmount'].includes(field) ? field : 'general']: message });
       if (error.code === 'UNAUTHORIZED') onUnauthorized();
     } finally { pending.current = false; setSending(false); }
   }
@@ -94,7 +105,7 @@ export default function TransactionDrawer({ open, accounts, categories, defaultA
   return <div className={`${styles.root} ${styles.overlay}`} onPointerDown={e => { if (e.target === e.currentTarget) close(); }}>
     <div ref={dialogRef} className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="money-drawer-title" aria-busy={sending}>
       <div className={styles.handle} />
-      {result ? <div className={styles.success}><h2 id="money-drawer-title">Đã ghi vào sổ.</h2><p>Khoản {draft.type.toLowerCase()} <MoneyAmount value={draft.amount} hidden={hidden} /></p><h3>Số dư mới</h3>{Object.entries(result.balances).map(([code, balance]) => <div className={styles.row} key={code}><span>{accounts.find(a => a.code === code)?.name ?? code}</span><MoneyAmount value={balance} hidden={hidden} /></div>)}<button data-done className={styles.primary} onClick={close}>Xong</button></div> : <form className={styles.drawerForm} onSubmit={e => { e.preventDefault(); void submit(); }}>
+      {result ? <div className={styles.success}><h2 id="money-drawer-title">Đã ghi vào sổ.</h2><p>Khoản {draft.type.toLowerCase()} <MoneyAmount value={draft.amount} hidden={hidden} /></p>{result.debtCode && <p>Phần của {split.party.trim()} đã ghi thành khoản nợ {result.debtCode}.</p>}<h3>Số dư mới</h3>{Object.entries(result.balances).map(([code, balance]) => <div className={styles.row} key={code}><span>{accounts.find(a => a.code === code)?.name ?? code}</span><MoneyAmount value={balance} hidden={hidden} /></div>)}<button data-done className={styles.primary} onClick={close}>Xong</button></div> : <form className={styles.drawerForm} onSubmit={e => { e.preventDefault(); void submit(); }}>
         <div className={styles.drawerHeading}><h2 id="money-drawer-title">Thêm giao dịch</h2><button type="button" className={styles.iconButton} disabled={sending} onClick={close} aria-label="Đóng">×</button></div>
         <div className={styles.drawerScroll}>
           <div className={styles.field}><label htmlFor="money-amount">Số tiền · VND</label><div className={styles.amountEntry}><input id="money-amount" inputMode="numeric" autoComplete="off" placeholder="0" disabled={sending} value={draft.amount ? draft.amount.toLocaleString('vi-VN') : ''} onChange={e => patch({ amount: Number(e.target.value.replace(/\D/g, '').slice(0, 15)) }, ['amount'])} aria-invalid={Boolean(errors.amount)} aria-describedby="money-error-amount" /><span>đ</span><button className={styles.zeros} type="button" disabled={sending} onClick={() => { const amount = draft.amount * 1000; if (Number.isSafeInteger(amount)) patch({ amount }, ['amount']); else setErrors({ amount: 'Số tiền quá lớn.' }); }}>000</button></div><p id="money-error-amount" className={styles.fieldError}>{errors.amount}</p></div>
@@ -102,6 +113,13 @@ export default function TransactionDrawer({ open, accounts, categories, defaultA
           {draft.type === 'Thu' ? accountSelect('to', 'Tài khoản', draft.to) : accountSelect('from', draft.type === 'Chuyển' ? 'Từ tài khoản' : 'Tài khoản', draft.from)}
           {draft.type === 'Chuyển' ? accountSelect('to', 'Đến tài khoản', draft.to) : <div className={styles.field}><label htmlFor="money-category">Danh mục</label><select id="money-category" value={draft.category ?? ''} disabled={sending} onChange={e => { patch({ category: e.target.value }, ['category']); setManualCategory(true); }} aria-invalid={Boolean(errors.category)} aria-describedby="money-error-category"><option value="">Chọn danh mục</option>{categories.filter(c => c.type === draft.type).map(c => <option key={c.name}>{c.name}</option>)}</select><p id="money-error-category" className={styles.fieldError}>{errors.category}</p><p className={styles.hint}>{hint}</p></div>}
           <div className={styles.field}><label htmlFor="money-note">Ghi chú · không bắt buộc</label><textarea id="money-note" value={draft.note ?? ''} disabled={sending} onChange={e => { noteChanged(e.target.value); setErrors(old => { const next = { ...old }; delete next.note; return next; }); }} aria-invalid={Boolean(errors.note)} aria-describedby="money-error-note" /><p id="money-error-note" className={styles.fieldError}>{errors.note}</p></div>
+          {draft.type === 'Chi' && apiLevel >= 2 && <div className={styles.splitBox}>
+            <label className={styles.splitToggle}><input type="checkbox" checked={split.on} disabled={sending} onChange={e => { setDirty(true); setSplit(v => ({ ...v, on: e.target.checked })); setErrors(old => Object.fromEntries(Object.entries(old).filter(([field]) => !field.startsWith('split')))); }} /> Có người nợ phần của tôi (chia tiền)</label>
+            {split.on && <>
+              <div className={styles.field}><label htmlFor="money-split-party">Ai nợ?</label><input id="money-split-party" maxLength={80} autoComplete="off" placeholder="Tên người" disabled={sending} value={split.party} onChange={e => { setDirty(true); setSplit(v => ({ ...v, party: e.target.value })); setErrors(old => { const next = { ...old }; delete next.splitParty; return next; }); }} aria-invalid={Boolean(errors.splitParty)} aria-describedby="money-error-split-party" /><p id="money-error-split-party" className={styles.fieldError}>{errors.splitParty}</p></div>
+              <AmountField id="money-split-amount" label="Họ nợ bao nhiêu · VND" value={split.amount} disabled={sending} error={errors.splitAmount} onChange={amount => { setDirty(true); setSplit(v => ({ ...v, amount })); setErrors(old => { const next = { ...old }; delete next.splitAmount; return next; }); }} hint={split.amount > 0 && draft.amount > split.amount ? `Phần của anh ${hidden ? '••••••' : `${(draft.amount - split.amount).toLocaleString('vi-VN')} đ`} ghi vào chi tiêu, phần của ${split.party.trim() || 'họ'} ghi thành khoản họ nợ anh.` : 'Số tiền ở trên là tổng anh đã trả, gồm cả phần của họ.'} />
+            </>}
+          </div>}
           <div className={styles.field}><label htmlFor="money-date">Ngày</label><input id="money-date" type="date" value={draft.date} disabled={sending} onChange={e => patch({ date: e.target.value }, ['date'])} aria-invalid={Boolean(errors.date)} aria-describedby="money-error-date" /><p id="money-error-date" className={styles.fieldError}>{errors.date}</p></div>
           {errors.general && <div className={styles.notice} role="alert">{errors.general}</div>}
         </div><div className={styles.drawerFooter}><button className={styles.primary} type="submit" disabled={sending}>{sending ? 'Đang gửi…' : Object.keys(errors).length ? 'Thử gửi lại' : `Lưu khoản ${draft.type.toLowerCase()}`}</button></div>

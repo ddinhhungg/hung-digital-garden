@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { CalendarItem } from '../../lib/money/types';
-import { WEEKDAYS, daysBetween, monthGrid, shiftMonth } from '../../lib/money/calendar';
+import { WEEKDAYS, daysBetween, kindSign, kindTone, monthGrid, shiftMonth } from '../../lib/money/calendar';
 import { itemEmoji } from '../../lib/money/emoji';
 import MoneyAmount from './MoneyAmount';
 import { MoneyIcon } from './MoneyShell';
@@ -80,7 +80,7 @@ export default function CalendarCard({ items, hidden, today, onOpen }: CalendarC
           <span className={`${styles.calNum} ${isToday ? styles.calNow : ''}`}>{cell.day}</span>
           {lead && <span className={styles.calSticker} aria-hidden="true">{itemEmoji(lead.label)}</span>}
           {list.length > 0 && <span className={styles.calDots} aria-hidden="true">
-            {list.slice(0, 3).map((i, n) => <i key={n} className={`${i.kind === 'in' ? styles.dotIn : styles.dotOut} ${i.certain ? '' : styles.dotMaybe}`} />)}
+            {list.slice(0, 3).map((i, n) => <i key={n} className={`${i.kind === 'in' ? styles.dotIn : i.kind === 'move' ? styles.dotMove : styles.dotOut} ${i.certain ? '' : styles.dotMaybe}`} />)}
           </span>}
         </button>;
       })}
@@ -101,7 +101,7 @@ export default function CalendarCard({ items, hidden, today, onOpen }: CalendarC
             {selected && (!item.certain || item.status === 'Đã xong') && <small>{[!item.certain && 'dự kiến', item.status === 'Đã xong' && 'đã xong'].filter(Boolean).join(' · ')}</small>}
           </span>
           {item.amount !== null
-            ? <MoneyAmount value={item.amount} hidden={hidden} sign={item.kind === 'in' ? '+' : '−'} direction={item.kind} size="small" />
+            ? <MoneyAmount value={item.amount} hidden={hidden} sign={kindSign(item.kind)} direction={kindTone(item.kind)} size="small" />
             : <em className={styles.unknownAmount}>chưa rõ</em>}
         </li>)}</ul>}
       {selected && <button type="button" className={styles.postitAdd} onClick={() => onOpen({ month, date: selected, form: true })}>＋ ghi kế hoạch cho ngày này</button>}

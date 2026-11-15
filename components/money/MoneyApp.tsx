@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MoneyError, type MoneyClient, type MoneyErrorCode,
   type MoneyLock, type NewTransaction, type NewPlan, type PlanStatus, type CalendarItem, type Summary,
+  type CompletePlanInput, type CompleteFixedInput, type NewDebt, type SettleDebtInput,
 } from '../../lib/money/types';
 import MoneyShell, { MoneyIcon, moneyTabs, type MoneyTab } from './MoneyShell';
 import PinScreen from './PinScreen';
@@ -19,6 +20,7 @@ import RecentTransactions from './RecentTransactions';
 import FundsPanel from './FundsPanel';
 import MonthPanel from './MonthPanel';
 import DebtsPanel from './DebtsPanel';
+import DebtSheet, { type DebtMode } from './DebtSheet';
 import TransactionDrawer from './TransactionDrawer';
 import styles from './money.module.css';
 
@@ -54,6 +56,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
   const [hidden, setHidden] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [calSheet, setCalSheet] = useState<{ month: string; date: string | null; form: boolean } | null>(null);
+  const [debtMode, setDebtMode] = useState<DebtMode | null>(null);
   const [clock, setClock] = useState<Clock | null>(null);
   const gateRef = useRef<Gate>('boot');
   const dataRef = useRef<Summary | null>(null);
@@ -239,7 +242,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
     }
   }
 
-  // Ghi hoặc đổi trạng thái kế hoạch: làm mới số liệu nhưng không để lỗi làm mới biến thành lỗi ghi.
+  // Ghi kế hoạch, công nợ, tự ghi sổ khi bấm Xong: làm mới số liệu nhưng không để lỗi làm mới biến thành lỗi ghi.
   async function guardedPlanWrite<T>(run: () => Promise<T>, waitRefresh: boolean): Promise<T> {
     try {
       const result = await run();
@@ -257,6 +260,13 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
   }
   const addPlan = (plan: NewPlan) => guardedPlanWrite(() => client.addPlan(plan), false);
   const setPlanStatus = (id: string, status: PlanStatus, date?: string) => guardedPlanWrite(() => client.setPlanStatus(id, status, date), true).then(() => undefined);
+  // Bấm Xong tự ghi sổ: chờ làm mới xong để lịch và số dư đã đổi khi hộp thoại đóng.
+  const completePlan = (input: CompletePlanInput) => guardedPlanWrite(() => client.completePlan(input), true);
+  const completeFixed = (input: CompleteFixedInput) => guardedPlanWrite(() => client.completeFixed(input), true);
+  const addDebt = (input: NewDebt) => guardedPlanWrite(() => client.addDebt(input), false);
+  const settleDebt = (input: SettleDebtInput) => guardedPlanWrite(() => client.settleDebt(input), false);
+  const offsetDebts = (receivable: string, payable: string) => guardedPlanWrite(() => client.offsetDebts(receivable, payable), false);
+  const apiLevel = data?.meta.api ?? 1;
 
   // Nếu Apps Script chưa nâng cấp (chưa có calendar) thì dùng tạm danh sách "sắp tới" cũ.
   const calendarItems: CalendarItem[] = data
@@ -297,7 +307,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
         {tab === 'funds' && <>
           <FundsPanel funds={data.funds} accounts={data.accounts} hidden={hidden} currentYear={clock.currentYear} />
           <h2 className={styles.subTitle}>🤝 Công nợ</h2>
-          <DebtsPanel debts={data.debts} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />
+          <DebtsPanel debts={data.debts} hidden={hidden} today={clock.today} currentYear={clock.currentYear} actions={apiLevel >= 2} onAction={setDebtMode} />
         </>}
         {tab === 'charts' && <ChartsPanel summary={data} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />}
         {tab === 'month' && <MonthPanel month={data.month} months={data.trend.months} hidden={hidden} />}
@@ -312,15 +322,21 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
       onManageToken={ready ? () => { setTokenRequired(false); setTokenError(''); changeGate('token'); } : undefined}
     >{content}</MoneyShell>
     {data && clock && ready && calSheet && <CalendarSheet
-      items={calendarItems} accounts={data.accounts} today={clock.today} hidden={hidden}
+      items={calendarItems} accounts={data.accounts} categories={data.meta.categories} apiLevel={apiLevel} today={clock.today} hidden={hidden}
       initialMonth={calSheet.month} initialDate={calSheet.date} startInForm={calSheet.form}
-      onAdd={addPlan} onSetStatus={setPlanStatus} onUnauthorized={enterToken} onClose={() => setCalSheet(null)}
+      onAdd={addPlan} onSetStatus={setPlanStatus} onCompletePlan={completePlan} onCompleteFixed={completeFixed}
+      onUnauthorized={enterToken} onClose={() => setCalSheet(null)}
+    />}
+    {data && clock && ready && debtMode && <DebtSheet
+      mode={debtMode} accounts={data.accounts} defaultAccount={data.meta.defaultAccount} today={clock.today} hidden={hidden}
+      onAdd={addDebt} onSettle={settleDebt} onOffset={offsetDebts}
+      onUnauthorized={enterToken} onClose={() => setDebtMode(null)}
     />}
     {data && clock && <TransactionDrawer
       open={ready && drawerOpen}
       accounts={data.accounts} categories={data.meta.categories}
       defaultAccount={data.meta.defaultAccount} today={clock.today}
-      hidden={hidden} onSubmit={addTransaction} onClose={() => setDrawerOpen(false)}
+      hidden={hidden} apiLevel={apiLevel} onSubmit={addTransaction} onClose={() => setDrawerOpen(false)}
       onUnauthorized={enterToken}
     />}
   </>;

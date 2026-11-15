@@ -88,8 +88,16 @@ export interface CalendarItem {
   date: string;
   label: string;
   amount: number | null;
-  kind: 'in' | 'out';
+  /** 'move' là chuyển giữa các tài khoản của mình (ví dụ trích vào quỹ), không phải thu hay chi. Có từ Apps Script 1.7. */
+  kind: 'in' | 'out' | 'move';
+  /** Tài khoản chính: nguồn với chi và chuyển, đích với thu. */
   account: string | null;
+  /** Tài khoản đến của khoản chuyển. */
+  to?: string | null;
+  /** Danh mục gợi ý (khoản cố định). */
+  category?: string | null;
+  /** Mã giao dịch đã tự ghi khi bấm Xong. null nghĩa là chưa ghi sổ. */
+  txId?: string | null;
   certain: boolean;
   status: PlanStatus;
   note: string;
@@ -97,12 +105,50 @@ export interface CalendarItem {
 export interface NewPlan {
   date: string;
   label: string;
-  kind: 'Thu' | 'Chi';
+  kind: 'Thu' | 'Chi' | 'Chuyển';
   amount: number | null;
   account: string | null;
+  to?: string | null;
   certain: boolean;
   note?: string;
 }
+// v1.7: bấm Xong thì tự ghi sổ
+export interface CompletePlanInput {
+  id: string;
+  /** false = chỉ đánh dấu xong, không tạo giao dịch. */
+  record: boolean;
+  date?: string;
+  amount?: number;
+  account?: string;
+  to?: string;
+  category?: string;
+  note?: string;
+}
+export interface CompleteFixedInput {
+  label: string;
+  /** Ngày theo lịch của khoản cố định (khoá để không ghi trùng). */
+  date: string;
+  record: boolean;
+  /** Ngày ghi giao dịch, mặc định hôm nay. */
+  txDate?: string;
+  amount?: number;
+  account?: string;
+  category?: string;
+  note?: string;
+}
+export interface CompleteResult { txId: string | null; balances: Record<string, number> }
+export interface NewDebt {
+  direction: 'lend' | 'borrow';
+  party: string;
+  amount: number;
+  account: string;
+  date?: string;
+  due?: string;
+  note?: string;
+}
+export interface SettleDebtInput { code: string; amount: number; account: string; date?: string; note?: string }
+export interface DebtResult { balances: Record<string, number>; code?: string; remaining?: number; closed?: boolean }
+export interface OffsetResult { amount: number; closed: string[] }
 export interface Holding {
   code: string;
   type: string;
@@ -161,6 +207,8 @@ export interface Summary {
       hints: string[];
     }[];
     defaultAccount: string;
+    /** Mức của Apps Script: 2 trở lên có bấm Xong tự ghi sổ, công nợ trong app, chia tiền. */
+    api?: number;
   };
 }
 
@@ -174,11 +222,15 @@ export interface NewTransaction {
   subcategory?: string;
   party?: string;
   note?: string;
+  /** Chỉ với khoản Chi: phần người khác nợ mình. App ghi chi phần của mình và một khoản cho vay phần của họ. */
+  split?: { party: string; amount: number; due?: string };
 }
 
 export interface AddResult {
   id: string;
   balances: Record<string, number>;
+  /** Có khi chia tiền: mã khoản nợ vừa tạo. */
+  debtCode?: string;
 }
 
 export type MoneyErrorCode =
@@ -200,6 +252,11 @@ export interface MoneyClient {
   addTransaction(t: NewTransaction): Promise<AddResult>;
   addPlan(p: NewPlan): Promise<{ id: string }>;
   setPlanStatus(id: string, status: PlanStatus, date?: string): Promise<{ id: string; status: PlanStatus }>;
+  completePlan(input: CompletePlanInput): Promise<CompleteResult>;
+  completeFixed(input: CompleteFixedInput): Promise<CompleteResult>;
+  addDebt(input: NewDebt): Promise<DebtResult>;
+  settleDebt(input: SettleDebtInput): Promise<DebtResult>;
+  offsetDebts(receivable: string, payable: string): Promise<OffsetResult>;
   hasToken(): boolean;
   setToken(t: string): void;
   clearToken(): void;

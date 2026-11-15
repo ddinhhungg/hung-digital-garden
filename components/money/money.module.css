@@ -389,3 +389,24 @@ details.group[open] > summary > span:first-child::before { content: '▾ '; }
 .sheetEmpty span { font: 11px var(--mono); color: var(--ink-muted); }
 .sheetToast { margin-bottom: 8px; text-align: center; font: italic 400 14px var(--serif); color: var(--sage); }
 @media (prefers-reduced-motion: no-preference) { .postit { transition: transform .2s; } .postit:hover { transform: rotate(0); } }
+
+/* v1.7: bấm Xong tự ghi sổ, công nợ trong app, chia tiền */
+.dotMove { background: var(--ink-muted); }
+.calDots .dotMaybe.dotMove { border-color: var(--ink-muted); }
+.planLogged { font: italic 400 12px var(--serif); color: var(--sage); }
+.completeLead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 2px 0 8px; font-size: 15px; }
+.completeLead b { font: italic 500 20px var(--serif); }
+.completeLead small { flex-basis: 100%; font: 10px var(--mono); color: var(--ink-muted); }
+.root .linkButton { display: block; width: 100%; min-height: 44px; margin-top: 4px; background: transparent; color: var(--ink-lt); font: 11px var(--mono); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--cream-dkr); }
+.drawerFooter .linkButton { margin-top: 6px; }
+.footHint { margin: 0; text-align: center; font: 9px/1.6 var(--mono); color: var(--ink-muted); }
+.splitBox { margin: 0 0 14px; padding: 10px 12px; border: 1px dashed var(--cream-dkr); border-radius: 8px; background: var(--cream-dk); }
+.splitToggle { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 12px; line-height: 1.4; }
+.splitToggle input { width: 20px; height: 20px; min-height: 0; flex-shrink: 0; accent-color: var(--sage); }
+.splitBox .field { margin-top: 8px; }
+.root .debtAdd { display: block; width: 100%; min-height: 44px; margin: 4px 0 6px; border: 1px dashed var(--sage); border-radius: 8px; background: transparent; color: var(--sage); font: 11px var(--mono); }
+.debtActions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.root .debtActions button { min-height: 40px; padding: 0 14px; border: 1px solid var(--cream-dkr); border-radius: 999px; background: var(--paper); font: 10px var(--mono); color: var(--ink-lt); }
+.root .debtActions .debtMain { border-color: var(--sage-lt); color: var(--sage); }
+.completeLead + .hint { margin: 4px 0 16px; }
+.field .hint { display: block; margin-top: 8px; }

@@ -34,3 +34,7 @@ export function dayTitle(date: string): string {
 export function daysBetween(from: string, to: string): number {
   return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
 }
+
+// Dấu và màu số tiền của một mục lịch: thu (+, xanh), chi (−, đỏ), chuyển giữa tài khoản của mình (↔, trung tính).
+export const kindSign = (kind: 'in' | 'out' | 'move'): '+' | '−' | '↔' => kind === 'in' ? '+' : kind === 'move' ? '↔' : '−';
+export const kindTone = (kind: 'in' | 'out' | 'move'): 'in' | 'out' | 'neutral' => kind === 'move' ? 'neutral' : kind;

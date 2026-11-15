@@ -4,11 +4,18 @@ import { readStore, removeStore, writeStore } from './storage';
 import {
   MoneyError,
   type AddResult,
+  type CompleteFixedInput,
+  type CompletePlanInput,
+  type CompleteResult,
+  type DebtResult,
   type MoneyClient,
   type MoneyErrorCode,
+  type NewDebt,
   type NewPlan,
   type NewTransaction,
+  type OffsetResult,
   type PlanStatus,
+  type SettleDebtInput,
   type Summary,
 } from './types';
 
@@ -19,7 +26,9 @@ type Envelope =
   | { ok: true; data: unknown }
   | { ok: false; code?: string; message?: string; field?: string | null };
 
-async function call(action: 'summary' | 'add' | 'addPlan' | 'setPlanStatus', payload?: unknown): Promise<unknown> {
+type Action = 'summary' | 'add' | 'addPlan' | 'setPlanStatus' | 'completePlan' | 'completeFixed' | 'addDebt' | 'settleDebt' | 'offsetDebts';
+
+async function call(action: Action, payload?: unknown): Promise<unknown> {
   const token = tokenStore.get();
   if (!token) throw new MoneyError('UNAUTHORIZED', 'Chưa có token.');
 
@@ -84,6 +93,7 @@ function normalize(raw: unknown): Summary {
     portfolio: s.portfolio ?? null,
     funds: (s.funds ?? []).map(splitName),
     debts: s.debts ?? [],
+    ...(s.meta ? { meta: { ...s.meta, api: s.meta.api ?? 1 } } : {}),
     recent: (s.recent ?? []).map(t => ({ ...t, date: t.date ?? '' })),
   };
 }
@@ -94,6 +104,11 @@ function saveCache(data: Summary): void {
   } catch {
     /* bỏ qua */
   }
+}
+
+function checked<T>(value: unknown, key: string): T {
+  if (!value || typeof value !== 'object' || !(key in value)) throw new MoneyError('SERVER', 'Phản hồi không hợp lệ.');
+  return value as T;
 }
 
 export function createMoneyClient(): MoneyClient {
@@ -128,6 +143,21 @@ export function createMoneyClient(): MoneyClient {
       const result = (await call('setPlanStatus', { id, status, date })) as { id: string; status: PlanStatus };
       if (!result || typeof result.id !== 'string') throw new MoneyError('SERVER', 'Phản hồi không hợp lệ.');
       return result;
+    },
+    async completePlan(input: CompletePlanInput): Promise<CompleteResult> {
+      return checked<CompleteResult>(await call('completePlan', input), 'balances');
+    },
+    async completeFixed(input: CompleteFixedInput): Promise<CompleteResult> {
+      return checked<CompleteResult>(await call('completeFixed', input), 'balances');
+    },
+    async addDebt(input: NewDebt): Promise<DebtResult> {
+      return checked<DebtResult>(await call('addDebt', input), 'balances');
+    },
+    async settleDebt(input: SettleDebtInput): Promise<DebtResult> {
+      return checked<DebtResult>(await call('settleDebt', input), 'balances');
+    },
+    async offsetDebts(receivable: string, payable: string): Promise<OffsetResult> {
+      return checked<OffsetResult>(await call('offsetDebts', { receivable, payable }), 'amount');
     },
     async addTransaction(t: NewTransaction): Promise<AddResult> {
       const result = (await call('add', t)) as AddResult;
