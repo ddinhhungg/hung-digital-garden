@@ -410,3 +410,62 @@ details.group[open] > summary > span:first-child::before { content: '▾ '; }
 .root .debtActions .debtMain { border-color: var(--sage-lt); color: var(--sage); }
 .completeLead + .hint { margin: 4px 0 16px; }
 .field .hint { display: block; margin-top: 8px; }
+
+/* v1.8: giao dịch gần đây có bộ lọc, heatmap thu chi theo ngày */
+.root .seeAll { display: block; width: 100%; min-height: 44px; margin-top: 6px; border: 1px solid var(--cream-dkr); border-radius: 8px; background: var(--paper); font: 11px var(--mono); color: var(--sage); }
+.transactionNoDate { grid-template-columns: minmax(0, 1fr); }
+.chipsLabel { margin: 8px 0 6px !important; font: 9px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: var(--ink-muted); }
+.dateRange { display: flex; gap: 8px; margin-top: 8px; }
+.dateRange label { flex: 1; display: flex; flex-direction: column; gap: 2px; font: 9px var(--mono); color: var(--ink-muted); }
+.dateRange input { min-height: 40px; padding: 0 8px; border: 1px solid var(--cream-dkr); border-radius: 6px; background: var(--cream); font-size: 13px; }
+.searchBox { width: 100%; min-height: 40px; margin-top: 10px; padding: 0 12px; border: 1px solid var(--cream-dkr); border-radius: 999px; background: var(--cream); font-size: 13px; }
+.root .inlineLink { display: inline; min-height: 0; padding: 0; font: inherit; color: var(--sage); text-decoration: underline; text-underline-offset: 3px; }
+.dayTotal { display: inline-flex; gap: 8px; margin-left: auto; font-style: normal; }
+.segmentsSmall { display: flex; flex: 1; padding: 3px; border-radius: 6px; background: var(--cream-dk); }
+.root .segmentsSmall button { flex: 1; min-height: 40px; font: 10px var(--mono); border-radius: 4px; color: var(--ink-lt); }
+.root .segmentsSmall [aria-pressed='true'] { background: var(--paper); color: var(--sage); box-shadow: 0 1px 2px rgba(28, 20, 16, .12); }
+.heat { --heat-rgb: 181, 52, 30; }
+.heatIncome { --heat-rgb: 61, 90, 62; }
+.heatTools { display: flex; gap: 8px; }
+.heatNote { margin: 10px 0 0 !important; font: 10px/1.7 var(--mono); color: var(--ink-muted); }
+.heatNav { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 6px; }
+.heatNav b { font: italic 500 18px var(--serif); letter-spacing: -.3px; }
+.heatGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)) 40px; gap: 3px; }
+.heatHead { text-align: center; font: 9px var(--mono); color: var(--ink-muted); padding-bottom: 2px; }
+.heatBlank { min-height: 44px; }
+.root .heatCell { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-width: 0; min-height: 44px; padding: 3px 0 2px; border: 1.5px solid transparent; border-radius: 6px; color: var(--ink); }
+.heatNum { font: 10px/1 var(--mono); }
+.heatAmt { font: 8px/1 var(--mono); }
+.heatWeek { display: flex; align-items: center; justify-content: flex-end; font: 9px var(--mono); color: var(--ink-lt); }
+.root .heatL0 { background: var(--cream-dk); }
+.root .heatL1 { background: rgba(var(--heat-rgb), .2); }
+.root .heatL2 { background: rgba(var(--heat-rgb), .4); }
+.root .heatL3 { background: rgba(var(--heat-rgb), .65); }
+.root .heatL4 { background: rgba(var(--heat-rgb), .92); }
+.root .heatL4 { color: var(--paper); }
+.root .heatCell:disabled { opacity: .35; cursor: default; }
+.root .heatToday { border-color: var(--ink); }
+.root .heatSel { outline: 2px solid var(--sage); outline-offset: 1px; }
+.heatStats { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; margin-top: 12px; }
+.heatStats div { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 11px; }
+.heatStats span { font: 9px var(--mono); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .6px; }
+.heatStats b { font-weight: 500; overflow-wrap: anywhere; }
+.heatLegend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 12px; font: 9px var(--mono); color: var(--ink-muted); }
+.heatLegend i { width: 14px; height: 14px; border-radius: 3px; }
+.heatYear { margin-top: 12px; }
+.heatYearMonths { display: grid; gap: 2px; margin: 0 0 3px 20px; font: 9px var(--mono); color: var(--ink-muted); }
+.heatYearBody { display: flex; gap: 4px; }
+.heatYearDays { display: grid; grid-template-rows: repeat(7, 1fr); width: 16px; font: 8px/1 var(--mono); color: var(--ink-muted); }
+.heatYearGrid { display: grid; flex: 1; gap: 2px; min-width: 0; }
+.heatYearCol { display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px; }
+.root .heatDot { display: block; width: 100%; aspect-ratio: 1; min-width: 0; border-radius: 2px; border: 1px solid transparent; padding: 0; }
+.root .heatDot.heatToday { border-color: var(--ink); }
+.heatSub { margin: 16px 0 8px !important; font: 9px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: var(--ink-muted); }
+.heatWeekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font: 9px var(--mono); color: var(--ink-lt); }
+.heatWeekdays > div { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.heatBar { display: flex; align-items: flex-end; width: 100%; height: 56px; border-radius: 4px; background: var(--cream-dk); overflow: hidden; }
+.heatBar i { display: block; width: 100%; background: rgba(var(--heat-rgb), .55); border-radius: 4px 4px 0 0; }
+.heatTop .heatBar i { background: rgba(var(--heat-rgb), .95); }
+.heatTop { color: var(--ink); font-weight: 600; }
+.heatWeekdays small { font: 8px var(--mono); color: var(--ink-muted); }
+.root .heatOpen { display: block; width: 100%; min-height: 44px; margin-top: 6px; border-radius: 8px; background: var(--sage); color: var(--paper); font: 11px var(--mono); }

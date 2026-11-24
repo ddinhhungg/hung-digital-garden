@@ -2,7 +2,8 @@ import {
   MoneyError, type Account, type AddResult, type CompleteFixedInput, type CompletePlanInput, type CompleteResult,
   type Debt, type DebtResult, type Fund, type NewDebt, type OffsetResult, type SettleDebtInput,
   type MoneyClient, type MoneyErrorCode, type MoneyLock,
-  type NewPlan, type NewTransaction, type PlanStatus, type CalendarItem, type Summary, type Transaction, type TxType,
+  type NewPlan, type NewTransaction, type PlanStatus, type CalendarItem, type Summary, type Transaction, type TransactionList, type TxType,
+  type DayFlow,
 } from './types';
 
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -112,7 +113,7 @@ function seed(now: number): Summary {
     },
     trend: { netWorth: [], months: [] }, upcoming: [], portfolio: null,
     accounts, funds, debts, recent,
-    meta: { txTypes: ['Thu', 'Chi', 'Chuyển', 'Vay', 'Cho vay', 'Trả nợ', 'Thu nợ', 'Điều chỉnh'], categories, defaultAccount: 'MOMO', api: 2 },
+    meta: { txTypes: ['Thu', 'Chi', 'Chuyển', 'Vay', 'Cho vay', 'Trả nợ', 'Thu nợ', 'Điều chỉnh'], categories, defaultAccount: 'MOMO', api: 3 },
   };
   updateMockTotals(summary, day(0));
   addDashboard(summary, now);
@@ -138,6 +139,47 @@ function updateMockTotals(data: Summary, today: string) {
   totals.netWorth = data.accounts.reduce((n, a) => n + a.balance, 0)
     + open.filter(d => d.kind === 'receivable').reduce((n, d) => n + d.remaining, 0)
     - open.filter(d => d.kind === 'payable').reduce((n, d) => n + d.remaining, 0);
+}
+
+// Lịch sử giả cũ hơn 30 giao dịch gần đây: dùng cho heatmap và trang lọc giao dịch.
+function olderHistory(now: number): Transaction[] {
+  let seedValue = 7;
+  const rand = () => { seedValue = (seedValue * 1103515245 + 12345) & 0x7fffffff; return seedValue / 0x7fffffff; };
+  const out: Transaction[] = [];
+  const expenseKinds: [string, number, number, string][] = [
+    ['Ăn uống', 25_000, 220_000, 'Ăn uống'], ['Di chuyển', 20_000, 120_000, 'Grab, xăng'],
+    ['Mua sắm', 80_000, 900_000, 'Mua đồ'], ['Giải trí', 60_000, 400_000, 'Cà phê, phim'],
+    ['Sức khoẻ', 90_000, 500_000, 'Thuốc, khám'], ['Gia đình', 200_000, 1_000_000, 'Gửi nhà'],
+  ];
+  let n = 0;
+  for (let back = 15; back <= 240; back++) {
+    const date = vnDay(now - back * dayMs);
+    const dom = Number(date.slice(8));
+    const entries = rand() < .18 ? 0 : 1 + Math.floor(rand() * 3);
+    for (let i = 0; i < entries; i++) {
+      const [category, lo, hi, note] = expenseKinds[Math.floor(rand() * expenseKinds.length)];
+      const heavy = rand() < .06;
+      out.push({ id: `MOCK-H${++n}`, date, type: 'Chi', amount: Math.round((lo + rand() * (hi - lo)) * (heavy ? 5 : 1) / 1000) * 1000,
+        from: 'MOMO', to: 'Ngoài', category, subcategory: '', party: '', note, source: ['App', 'Ảnh', 'Claude'][i % 3], status: 'OK' });
+    }
+    if (dom === 5 || dom === 20) out.push({ id: `MOCK-H${++n}`, date, type: 'Thu', amount: dom === 5 ? 6_700_000 : 7_000_000, from: 'Ngoài', to: 'VCB', category: 'Lương', subcategory: '', party: 'Công ty mẫu', note: `Lương kỳ ${dom === 5 ? 1 : 2}`, source: 'App', status: 'OK' });
+    if (dom === 25) out.push({ id: `MOCK-H${++n}`, date, type: 'Chi', amount: 4_000_000, from: 'VCB', to: 'Ngoài', category: 'Nhà ở', subcategory: '', party: 'Chủ nhà', note: 'Tiền nhà', source: 'App', status: 'OK' });
+    if (dom === 12) out.push({ id: `MOCK-H${++n}`, date, type: 'Chuyển', amount: 1_000_000, from: 'VCB', to: 'MOMO', category: '', subcategory: '', party: '', note: 'Nạp ví', source: 'App', status: 'OK' });
+    if (back === 40) out.push({ id: `MOCK-H${++n}`, date, type: 'Chi', amount: 99_000, from: 'MOMO', to: 'Ngoài', category: 'Ăn uống', subcategory: '', party: '', note: 'Ghi nhầm số tiền', source: 'App', status: 'Void' });
+  }
+  return out;
+}
+
+const byNewest = (a: Transaction, b: Transaction) => b.date.localeCompare(a.date);
+function dailyOf(list: Transaction[]): DayFlow[] {
+  const map = new Map<string, DayFlow>();
+  for (const t of list) {
+    if (t.status !== 'OK' || (t.type !== 'Thu' && t.type !== 'Chi')) continue;
+    const row = map.get(t.date) ?? { date: t.date, income: 0, expense: 0 };
+    if (t.type === 'Thu') row.income += t.amount; else row.expense += t.amount;
+    map.set(t.date, row);
+  }
+  return [...map.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export type MockScenario = 'full' | 'new' | 'empty';
@@ -234,6 +276,8 @@ export function createMoneyMock({ now }: { now: () => number }): {
   };
 } {
   let data = seed(now());
+  let older = olderHistory(now());
+  const allTx = () => [...data.recent, ...older].sort(byNewest);
   let cached = { data: copy(data), savedAt: data.asOf };
   let token = '';
   let pin: string | null = null;
@@ -283,8 +327,15 @@ export function createMoneyMock({ now }: { now: () => number }): {
       data.asOf = new Date(now()).toISOString();
       updateMockTotals(data, vnDay(now()));
       syncLatest(data, vnDay(now()));
+      if (data.trend.months.length || data.recent.length) data.trend.daily = dailyOf(allTx());
       cached = { data: copy(data), savedAt: data.asOf };
       return copy(data);
+    },
+    async getTransactions(): Promise<TransactionList> {
+      await delay();
+      guard();
+      const items = copy(allTx());
+      return { items, total: items.length, truncated: false };
     },
     async addPlan(p: NewPlan) {
       await delay();
@@ -438,9 +489,10 @@ export function createMoneyMock({ now }: { now: () => number }): {
     controls: {
       failNextRead: code => { readError = code; },
       failNextSubmit: (code, field) => { submitError = { code, field }; },
-      setEmpty: () => { applyScenario(data, 'empty'); },
+      setEmpty: () => { applyScenario(data, 'empty'); older = []; },
       setScenario: scenario => {
         data = seed(now()); applyScenario(data, scenario);
+        older = scenario === 'full' ? olderHistory(now()) : [];
         cached = { data: copy(data), savedAt: data.asOf };
       },
     },

@@ -22,6 +22,8 @@ import MonthPanel from './MonthPanel';
 import DebtsPanel from './DebtsPanel';
 import DebtSheet, { type DebtMode } from './DebtSheet';
 import TransactionDrawer from './TransactionDrawer';
+import TransactionsSheet from './TransactionsSheet';
+import type { TypeKey } from '../../lib/money/txFilter';
 import styles from './money.module.css';
 
 type Gate = 'boot' | 'pin' | 'check-token' | 'token' | 'ready';
@@ -57,6 +59,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [calSheet, setCalSheet] = useState<{ month: string; date: string | null; form: boolean } | null>(null);
   const [debtMode, setDebtMode] = useState<DebtMode | null>(null);
+  const [txSheet, setTxSheet] = useState<{ date: string | null; type: TypeKey } | null>(null);
   const [clock, setClock] = useState<Clock | null>(null);
   const gateRef = useRef<Gate>('boot');
   const dataRef = useRef<Summary | null>(null);
@@ -267,6 +270,7 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
   const settleDebt = (input: SettleDebtInput) => guardedPlanWrite(() => client.settleDebt(input), false);
   const offsetDebts = (receivable: string, payable: string) => guardedPlanWrite(() => client.offsetDebts(receivable, payable), false);
   const apiLevel = data?.meta.api ?? 1;
+  const loadTransactions = useCallback(() => client.getTransactions(), [client]);
 
   // Nếu Apps Script chưa nâng cấp (chưa có calendar) thì dùng tạm danh sách "sắp tới" cũ.
   const calendarItems: CalendarItem[] = data
@@ -302,14 +306,14 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
           <OverviewPanel totals={data.totals} month={data.month} trend={data.trend.netWorth} currentYear={clock.currentYear} hidden={hidden} onToggleHidden={() => setHidden(value => !value)} />
           <CalendarCard items={calendarItems} hidden={hidden} today={clock.today} onOpen={setCalSheet} />
           <AccountList accounts={data.accounts} hidden={hidden} />
-          <RecentTransactions transactions={data.recent} hidden={hidden} currentYear={clock.currentYear} onAdd={() => setDrawerOpen(true)} />
+          <RecentTransactions transactions={data.recent} hidden={hidden} currentYear={clock.currentYear} onAdd={() => setDrawerOpen(true)} onOpen={() => setTxSheet({ date: null, type: 'all' })} />
         </>}
         {tab === 'funds' && <>
           <FundsPanel funds={data.funds} accounts={data.accounts} hidden={hidden} currentYear={clock.currentYear} />
           <h2 className={styles.subTitle}>🤝 Công nợ</h2>
           <DebtsPanel debts={data.debts} hidden={hidden} today={clock.today} currentYear={clock.currentYear} actions={apiLevel >= 2} onAction={setDebtMode} />
         </>}
-        {tab === 'charts' && <ChartsPanel summary={data} hidden={hidden} today={clock.today} currentYear={clock.currentYear} />}
+        {tab === 'charts' && <ChartsPanel summary={data} hidden={hidden} today={clock.today} currentYear={clock.currentYear} onOpenDay={(date, metric) => setTxSheet({ date, type: metric === 'income' ? 'Thu' : 'Chi' })} />}
         {tab === 'month' && <MonthPanel month={data.month} months={data.trend.months} hidden={hidden} />}
       </>}
   </>;
@@ -326,6 +330,11 @@ export default function MoneyApp({ client, lock }: MoneyAppProps) {
       initialMonth={calSheet.month} initialDate={calSheet.date} startInForm={calSheet.form}
       onAdd={addPlan} onSetStatus={setPlanStatus} onCompletePlan={completePlan} onCompleteFixed={completeFixed}
       onUnauthorized={enterToken} onClose={() => setCalSheet(null)}
+    />}
+    {data && clock && ready && txSheet && <TransactionsSheet
+      apiLevel={apiLevel} fallback={data.recent} load={loadTransactions}
+      today={clock.today} currentYear={clock.currentYear} hidden={hidden} initialDate={txSheet.date} initialType={txSheet.type}
+      onUnauthorized={enterToken} onClose={() => setTxSheet(null)}
     />}
     {data && clock && ready && debtMode && <DebtSheet
       mode={debtMode} accounts={data.accounts} defaultAccount={data.meta.defaultAccount} today={clock.today} hidden={hidden}

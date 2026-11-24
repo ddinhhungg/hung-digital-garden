@@ -1,26 +1,18 @@
-import { useState } from 'react';
 import type { Transaction } from '../../lib/money/types';
-import MoneyAmount from './MoneyAmount';
 import MoneyState from './MoneyState';
-import { formatDay } from './ChartPrimitives';
-import { categoryEmoji } from '../../lib/money/emoji';
+import TransactionRow from './TransactionRow';
 import styles from './money.module.css';
 
-export default function RecentTransactions({ transactions, hidden, currentYear, onAdd }: {
-  transactions: Transaction[]; hidden: boolean; currentYear: number; onAdd: () => void;
+const SHOWN = 6;
+
+// Thẻ ngoài trang chính: vài giao dịch mới nhất. Bấm "Xem chi tiết" mở trang đầy đủ có bộ lọc.
+export default function RecentTransactions({ transactions, hidden, currentYear, onAdd, onOpen }: {
+  transactions: Transaction[]; hidden: boolean; currentYear: number; onAdd: () => void; onOpen: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const shown = transactions.filter(t => t.status !== 'Void').slice(0, SHOWN);
   return <section className={styles.card}><div className={styles.cardHead}><h2>Giao dịch gần đây</h2></div>
-    {!transactions.length ? <><MoneyState status="empty" title="Chưa có giao dịch" description="Ghi khoản thu hoặc chi đầu tiên khi anh sẵn sàng." /><button className={styles.textButton} onClick={onAdd}>Thêm giao dịch</button></> :
-      <ul className={styles.list}>{transactions.slice(0, expanded ? 30 : 10).map(t => {
-        const incoming = t.from === 'Ngoài', outgoing = t.to === 'Ngoài';
-        return <li key={t.id} className={`${styles.transaction} ${t.status === 'Void' ? styles.void : ''}`}>
-          <span className={styles.txDate}>{formatDay(t.date, currentYear)}</span><div>
-            <div className={styles.row}><strong><span className={styles.emoji} aria-hidden="true">{incoming ? '💰' : outgoing ? categoryEmoji(t.category) : '🔁'}</span>{t.category || t.type}</strong><MoneyAmount value={t.amount} hidden={hidden} sign={incoming ? '+' : outgoing ? '−' : '↔'} direction={incoming ? 'in' : outgoing ? 'out' : 'neutral'} size="small" /></div>
-            <p>{[t.party, t.note].filter(Boolean).join(' · ')}</p><p className={styles.txMeta}>{t.from} → {t.to} · {t.source}{t.status !== 'OK' ? ` · ${t.status}` : ''}</p>
-          </div>
-        </li>;
-      })}</ul>}
-    {transactions.length > 10 && <button className={styles.textButton} onClick={() => setExpanded(v => !v)} aria-expanded={expanded}>{expanded ? 'Thu gọn' : 'Xem thêm'}</button>}
+    {!shown.length ? <><MoneyState status="empty" title="Chưa có giao dịch" description="Ghi khoản thu hoặc chi đầu tiên khi anh sẵn sàng." /><button className={styles.textButton} onClick={onAdd}>Thêm giao dịch</button></> :
+      <ul className={styles.list}>{shown.map(t => <TransactionRow key={t.id} t={t} hidden={hidden} currentYear={currentYear} />)}</ul>}
+    {shown.length > 0 && <button type="button" className={styles.seeAll} onClick={onOpen}>Xem chi tiết, lọc theo ngày và loại →</button>}
   </section>;
 }

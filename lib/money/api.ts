@@ -17,6 +17,8 @@ import {
   type PlanStatus,
   type SettleDebtInput,
   type Summary,
+  type Transaction,
+  type TransactionList,
 } from './types';
 
 const CACHE_KEY = 'money.summary.v1';
@@ -26,7 +28,7 @@ type Envelope =
   | { ok: true; data: unknown }
   | { ok: false; code?: string; message?: string; field?: string | null };
 
-type Action = 'summary' | 'add' | 'addPlan' | 'setPlanStatus' | 'completePlan' | 'completeFixed' | 'addDebt' | 'settleDebt' | 'offsetDebts';
+type Action = 'summary' | 'add' | 'addPlan' | 'setPlanStatus' | 'completePlan' | 'completeFixed' | 'addDebt' | 'settleDebt' | 'offsetDebts' | 'transactions';
 
 async function call(action: Action, payload?: unknown): Promise<unknown> {
   const token = tokenStore.get();
@@ -133,6 +135,12 @@ export function createMoneyClient(): MoneyClient {
       const data = normalize(await call('summary'));
       saveCache(data);
       return data;
+    },
+    async getTransactions(): Promise<TransactionList> {
+      const raw = checked<{ items: unknown; total?: number; truncated?: boolean }>(await call('transactions', {}), 'items');
+      if (!Array.isArray(raw.items)) throw new MoneyError('SERVER', 'Phản hồi không hợp lệ.');
+      const items = (raw.items as Transaction[]).map(t => ({ ...t, date: t.date ?? '' }));
+      return { items, total: typeof raw.total === 'number' ? raw.total : items.length, truncated: raw.truncated === true };
     },
     async addPlan(p: NewPlan): Promise<{ id: string }> {
       const result = (await call('addPlan', p)) as { id: string };

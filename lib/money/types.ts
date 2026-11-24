@@ -67,6 +67,8 @@ export interface CategorySpend {
 
 // v1.2
 export interface DailySpend { date: string; expense: number }
+/** Thu và chi của một ngày (chỉ Thu, Chi đã ghi OK; không tính chuyển, nợ, điều chỉnh). Có từ Apps Script 1.8. */
+export interface DayFlow { date: string; income: number; expense: number }
 export interface NetWorthPoint { date: string; netWorth: number; available: number; liquid: number }
 export interface MonthFlow {
   key: string; income: number; expense: number;
@@ -191,6 +193,8 @@ export interface Summary {
   trend: {
     netWorth: NetWorthPoint[];
     months: MonthFlow[];
+    /** Thu/chi mỗi ngày trong khoảng 12 tháng gần nhất, chỉ những ngày có phát sinh. Có từ Apps Script 1.8. */
+    daily?: DayFlow[];
   };
   upcoming: UpcomingItem[];
   calendar?: CalendarItem[];
@@ -207,7 +211,7 @@ export interface Summary {
       hints: string[];
     }[];
     defaultAccount: string;
-    /** Mức của Apps Script: 2 trở lên có bấm Xong tự ghi sổ, công nợ trong app, chia tiền. */
+    /** Mức của Apps Script: 2 trở lên có bấm Xong tự ghi sổ, công nợ trong app, chia tiền. 3 trở lên có heatmap nhiều tháng và danh sách giao dịch đầy đủ. */
     api?: number;
   };
 }
@@ -224,6 +228,15 @@ export interface NewTransaction {
   note?: string;
   /** Chỉ với khoản Chi: phần người khác nợ mình. App ghi chi phần của mình và một khoản cho vay phần của họ. */
   split?: { party: string; amount: number; due?: string };
+}
+
+/** Kết quả action transactions (Apps Script 1.8). Sắp theo ngày giảm dần. */
+export interface TransactionList {
+  items: Transaction[];
+  /** Tổng số dòng trong sổ. */
+  total: number;
+  /** true nếu sổ còn nhiều dòng cũ hơn chưa tải. */
+  truncated: boolean;
 }
 
 export interface AddResult {
@@ -249,6 +262,7 @@ export class MoneyError extends Error {
 
 export interface MoneyClient {
   getSummary(): Promise<Summary>;
+  getTransactions(): Promise<TransactionList>;
   addTransaction(t: NewTransaction): Promise<AddResult>;
   addPlan(p: NewPlan): Promise<{ id: string }>;
   setPlanStatus(id: string, status: PlanStatus, date?: string): Promise<{ id: string; status: PlanStatus }>;
